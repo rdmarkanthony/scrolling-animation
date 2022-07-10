@@ -33,3 +33,67 @@
 </div>
 <div class="section section-three com_height-100"></div>
 {% endblock %}
+
+{% block footerscript %}
+<!-- I exclude this script in custom.js so we can sort out that it is just for this page -->
+<script>
+    // animate the intro section with video banner
+    const _titleIntro = new bp.parallax.scroller({
+        target: document.querySelector('.section-title-intro'),
+        init: function(scroller) {
+            scroller.el.sc = scroller.target.querySelector('.com_section-content');
+            scroller.el.cover = scroller.target.querySelector('.com_cover-content');
+
+            bp.resizeFn(function() {
+                scroller.offset.top = $(scroller.el.sc).offset().top - bp.height();
+                scroller.offset.bottom = $(scroller.el.sc).offset().top;
+            });
+
+            // console.log('init', scroller);
+        },
+        update: function(scroller, e) {
+            // animate the video cover
+            TweenMax.set(scroller.el.cover, {opacity: 1 - bp.abs(scroller.offset.current)});
+
+            // animate the titles parent container
+            // portion of scroller offset.current using %
+            // TweenMax.set(scroller.el.sc , {opacity: bp.abs(scroller.offset.portion('65%','90%')) });
+
+            // portion of scroller offset using diff containers offsets
+            TweenMax.set(scroller.el.sc , {opacity: bp.abs( scroller.offset.portion( $(scroller.el.sc).offset().top - (bp.height() * 0.4), $('.se-ti-in-list', scroller.target).offset().top - (bp.height() * 0.45) ) ) });
+
+            // console.log('update', scroller.offset.current);
+        }
+    });
+
+    new bp.parallax.scroller({
+        target: _titleIntro.el.sc,
+        init: function(scroller) {
+            scroller.el.list = scroller.target.querySelectorAll('.se-ti-in-list li');
+
+            scroller.currentList = 0;
+
+            bp.resizeFn(function() {
+                scroller.offset.top = $(scroller.target).offset().top;
+                scroller.offset.bottom = $(scroller.target).offset().top + scroller.target.offsetHeight;
+            });
+        },
+        update: function(scroller, e) {
+            let _currentList = 0;
+
+            // determine which title is in the middle of the display, then will add/remove class
+            $(scroller.el.list).each(function(index) {
+                const _this = this;
+                const _offset = bp.st() - ($(_this).offset().top - $(scroller.target).offset().top) - (bp.height() * 0.5) + (_this.offsetHeight * 0.25);
+
+                if(_offset >= 0) _currentList = index;
+
+                if(index != scroller.currentList) $(scroller.target).removeClass('text-' + index);
+            });
+
+            if(_currentList != scroller.currentList) { scroller.currentList = _currentList; }
+            $(scroller.target).addClass('text-' + scroller.currentList);
+        }
+    });
+</script>
+{% endblock %}

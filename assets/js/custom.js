@@ -408,73 +408,21 @@ const bp = {
 
 		return value;
 	},
+	getOffsetRange: function(min,max) {
+		return (bp.st() - min) / (max - min);
+	},
 	parallax: {
-		st: function() { return window.pageYOffset || document.documentElement.scrollTop },
 		lastScroll: 0,
 		direction: null,
 		init: function() {
 			// get direction
 			bp.scrollFn(function() {
-				if(bp.parallax.st() > bp.parallax.lastScroll) {
+				if(bp.st() > bp.parallax.lastScroll) {
 					bp.parallax.direction = 'down';
 				} else {
 					bp.parallax.direction = 'up';
 				}
-				bp.parallax.lastScroll = bp.parallax.st() <= 0 ? 0 : bp.parallax.st();
-			});
-
-			// animate the intro section with video banner
-			const _titleIntro = new bp.parallax.scroller({
-				target: document.querySelector('.section-title-intro'),
-				init: function(scroller) {
-					scroller.el.sc = scroller.target.querySelector('.com_section-content');
-					scroller.el.cover = scroller.target.querySelector('.com_cover-content');
-
-					bp.resizeFn(function() {
-						scroller.offset.top = $(scroller.el.sc).offset().top - bp.height();
-						scroller.offset.bottom = $(scroller.el.sc).offset().top;
-					});
-
-					// console.log('init', scroller);
-				},
-				update: function(scroller, e) {
-					// animate the titles parent container
-					TweenMax.set(scroller.el.sc , {opacity: bp.abs(scroller.offsetPortion(0.6,0.85)) });
-
-					// animate the video cover
-					TweenMax.set(scroller.el.cover, {opacity: 1 - bp.abs(scroller.offset.current)});
-					// console.log('update', scroller.offset.current);
-				}
-			});
-
-			new bp.parallax.scroller({
-				target: _titleIntro.el.sc,
-				init: function(scroller) {
-					scroller.el.list = scroller.target.querySelectorAll('.se-ti-in-list li');
-
-					scroller.currentList = 0;
-
-					bp.resizeFn(function() {
-						scroller.offset.top = $(scroller.target).offset().top;
-						scroller.offset.bottom = $(scroller.target).offset().top + scroller.target.offsetHeight;
-					});
-				},
-				update: function(scroller, e) {
-					let _currentList = 0;
-
-					// determine which title is in the middle of the display, then will add/remove class
-					$(scroller.el.list).each(function(index) {
-						const _this = this;
-						const _offset = bp.parallax.st() - ($(_this).offset().top - $(scroller.target).offset().top) - (bp.height() * 0.5) + (_this.offsetHeight * 0.25);
-
-						if(_offset >= 0) _currentList = index;
-
-						if(index != scroller.currentList) $(scroller.target).removeClass('text-' + index);
-					});
-
-					if(_currentList != scroller.currentList) { scroller.currentList = _currentList; }
-					$(scroller.target).addClass('text-' + scroller.currentList);
-				}
+				bp.parallax.lastScroll = bp.st() <= 0 ? 0 : bp.st();
 			});
 		},
 		scroller: function(opt) {
@@ -485,7 +433,17 @@ const bp = {
 			_scroller.offset = {
 				top: 0,
 				bottom: 0,
-				current: 0
+				current: 0,
+				portion: function(min,max) {
+					if(isNaN(min)) {
+						min = parseFloat(min.replace('%', '')) / 100;
+						max = parseFloat(max.replace('%', '')) / 100;
+
+						return (_scroller.offset.current - min) / (max - min);
+					} else {
+						return bp.getOffsetRange(min,max);
+					}
+				}
 			};
 
 			_scroller.init = function() {
@@ -512,11 +470,7 @@ const bp = {
 
 			_scroller.update = function() {
 				// get current offset by percent
-				_scroller.offset.current = (bp.parallax.st() - _scroller.offset.top) / _scroller.offset.bottom - _scroller.offset.top;
-			}
-
-			_scroller.offsetPortion = function(min,max) {
-				return (_scroller.offset.current - min) / (max - min);
+				_scroller.offset.current = bp.getOffsetRange(_scroller.offset.top, _scroller.offset.bottom);
 			}
 
 			if(opt.target) _scroller.init();
@@ -556,12 +510,11 @@ const bp = {
 				_canvas.assets.list.push(_src);
 			}
 
-			_canvas.image = new Image();
-			_canvas.image.src = _canvas.assets.list[0];
-
 			_canvas.target.width = _canvas.assets.size[0];
 			_canvas.target.height = _canvas.assets.size[1];
 
+			_canvas.image = new Image();
+			_canvas.image.src = _canvas.assets.list[0];
 			_canvas.image.onload = function() {
 				_canvas.context.drawImage(_canvas.image, 0, 0);
 			}
@@ -573,9 +526,7 @@ const bp = {
 		}
 
 		_canvas.update = function(top, bottom) {
-			const _range = (bp.st() - top) / bottom - top;
-
-			let _index = Math.round(_canvas.assets.count * _range);
+			let _index = Math.round(_canvas.assets.count * bp.getOffsetRange(top, bottom));
 			if(_index <= 0) _index = 0;
 			if(_index >= _canvas.assets.count - 1) _index = _canvas.assets.count - 1;
 
