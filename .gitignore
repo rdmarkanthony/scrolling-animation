@@ -11,6 +11,6 @@ sftp-config.json
 public/assets/js/custom.js
 public/assets/css/style.css
 
- .firebase/
+.firebase/
 .firebaserc
 firebase.json
