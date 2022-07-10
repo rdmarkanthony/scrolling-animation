@@ -27,6 +27,11 @@ const bp = {
 
 		bp.parallax.init();
 
+		// for aspect ratio
+		$('[data-aspect-ratio]').each(function() {
+			new bp.aspectRatio({target: this});
+		});
+
 		// for auto scroll
 		$('.auto-scroll').each(function() {
 			$(this).click(function(e) {
@@ -334,7 +339,75 @@ const bp = {
 			}
 		}
 	},
+	aspectRatio: function(opt) {
+		const _ar = this;
+
+		_ar.target = '';
+		_ar.base = {
+			width: 0,
+			height: 0,
+			minHeight: false,
+			vertical: false
+		}
+		_ar.current = {
+			width: 0,
+			height: 0
+		}
+
+		_ar.init = function() {
+			_ar.target = opt.target;
+
+			let _dataset = _ar.target.dataset.aspectRatio;
+			if(_dataset) {
+				_dataset = _dataset.split(',');
+
+				if(_dataset[0]) _ar.base.width = parseFloat(_dataset[0]);
+				if(_dataset[1]) _ar.base.height = parseFloat(_dataset[1]);
+				if(_dataset[2]) {
+					if((_dataset[2]).toLowerCase() == 'minheight') _ar.base.minHeight = true;
+				}
+				if(_dataset[3]) {
+					if((_dataset[3].toLowerCase() == 'vertical')) _ar.base.vertical = true;
+				}
+			}
+
+			bp.resizeFn(function() {
+				_ar.update();
+			});
+
+			_ar.init = null;
+			// console.log(_ar);
+		}
+
+		_ar.update = function() {
+			_ar.current.width = _ar.target.parentNode.offsetWidth;
+			_ar.current.height = Math.round(_ar.base.height * (_ar.current.width / _ar.base.width));
+
+			// if vertical or height first
+			if(_ar.base.vertical) {
+				_ar.current.height = _ar.target.parentNode.offsetHeight;
+				_ar.current.width = Math.round(_ar.base.width * (_ar.current.height / _ar.base.height));
+			}
+
+			_ar.target.style.width = _ar.current.width + 'px';
+
+			// if height/minHeight
+			if(_ar.base.minHeight) {
+				_ar.target.style.minHeight =  _ar.current.height + 'px';
+			} else {
+				_ar.target.style.height =  _ar.current.height + 'px';
+			}
+		}
+
+		if(opt.target) _ar.init();
+	},
 	st: function() { return window.pageYOffset || document.documentElement.scrollTop },
+	abs: function(value) {
+		if(value <= 0) value = 0;
+		if(value >= 1) value = 1;
+
+		return value;
+	},
 	parallax: {
 		st: function() { return window.pageYOffset || document.documentElement.scrollTop },
 		lastScroll: 0,
@@ -350,11 +423,12 @@ const bp = {
 				bp.parallax.lastScroll = bp.parallax.st() <= 0 ? 0 : bp.parallax.st();
 			});
 
+			// animate the intro section with video banner
 			const _titleIntro = new bp.parallax.scroller({
+				target: document.querySelector('.section-title-intro'),
 				init: function(scroller) {
-					scroller.el.target = document.querySelector('.section-title-intro');
-					scroller.el.sc = scroller.el.target.querySelector('.com_section-content');
-					scroller.el.cover = scroller.el.target.querySelector('.com_cover-content');
+					scroller.el.sc = scroller.target.querySelector('.com_section-content');
+					scroller.el.cover = scroller.target.querySelector('.com_cover-content');
 
 					bp.resizeFn(function() {
 						scroller.offset.top = $(scroller.el.sc).offset().top - bp.height();
@@ -364,38 +438,42 @@ const bp = {
 					// console.log('init', scroller);
 				},
 				update: function(scroller, e) {
-					TweenMax.set(scroller.el.sc , {opacity: scroller.offsetPortion(0.6,0.85) });
-					TweenMax.set(scroller.el.cover, {opacity: 1 - scroller.offset.current});
-					console.log('update', scroller.offset.current );
+					// animate the titles parent container
+					TweenMax.set(scroller.el.sc , {opacity: bp.abs(scroller.offsetPortion(0.6,0.85)) });
+
+					// animate the video cover
+					TweenMax.set(scroller.el.cover, {opacity: 1 - bp.abs(scroller.offset.current)});
+					// console.log('update', scroller.offset.current);
 				}
 			});
 
 			new bp.parallax.scroller({
+				target: _titleIntro.el.sc,
 				init: function(scroller) {
-					scroller.el.target = _titleIntro.el.sc;
-					scroller.el.list = scroller.el.target.querySelectorAll('.se-ti-in-list li');
+					scroller.el.list = scroller.target.querySelectorAll('.se-ti-in-list li');
 
 					scroller.currentList = 0;
 
 					bp.resizeFn(function() {
-						scroller.offset.top = $(scroller.el.target).offset().top;
-						scroller.offset.bottom = $(scroller.el.target).offset().top + scroller.el.target.offsetHeight;
+						scroller.offset.top = $(scroller.target).offset().top;
+						scroller.offset.bottom = $(scroller.target).offset().top + scroller.target.offsetHeight;
 					});
 				},
 				update: function(scroller, e) {
 					let _currentList = 0;
 
+					// determine which title is in the middle of the display, then will add/remove class
 					$(scroller.el.list).each(function(index) {
 						const _this = this;
-						const _offset = bp.parallax.st() - ($(_this).offset().top - $(scroller.el.target).offset().top) - (bp.height() * 0.5) + (_this.offsetHeight * 0.25);
+						const _offset = bp.parallax.st() - ($(_this).offset().top - $(scroller.target).offset().top) - (bp.height() * 0.5) + (_this.offsetHeight * 0.25);
 
 						if(_offset >= 0) _currentList = index;
 
-						if(index != scroller.currentList) $(scroller.el.target).removeClass('text-' + index);
+						if(index != scroller.currentList) $(scroller.target).removeClass('text-' + index);
 					});
 
 					if(_currentList != scroller.currentList) { scroller.currentList = _currentList; }
-					$(scroller.el.target).addClass('text-' + scroller.currentList);
+					$(scroller.target).addClass('text-' + scroller.currentList);
 				}
 			});
 		},
@@ -407,11 +485,11 @@ const bp = {
 			_scroller.offset = {
 				top: 0,
 				bottom: 0,
-				current: 0,
-				absolute: true
+				current: 0
 			};
 
 			_scroller.init = function() {
+				_scroller.target = opt.target;
 				if(opt.init) opt.init(_scroller);
 
 				if(opt.update) {
@@ -435,26 +513,83 @@ const bp = {
 			_scroller.update = function() {
 				// get current offset by percent
 				_scroller.offset.current = (bp.parallax.st() - _scroller.offset.top) / _scroller.offset.bottom - _scroller.offset.top;
-
-				if(_scroller.offset.absolute) {
-					if(_scroller.offset.current <= 0) _scroller.offset.current = 0;
-					if(_scroller.offset.current >= 1) _scroller.offset.current = 1;
-				}
 			}
 
 			_scroller.offsetPortion = function(min,max) {
-				let _portion = (_scroller.offset.current - min) / (max - min);
-
-				if(_scroller.offset.absolute) {
-					if(_portion <= 0) _portion = 0;
-					if(_portion >= 1) _portion = 1;
-				}
-
-				return _portion
+				return (_scroller.offset.current - min) / (max - min);
 			}
 
-			_scroller.init();
+			if(opt.target) _scroller.init();
 		}
+	},
+	canvasBanner: function(opt) {
+		const _canvas = this;
+
+		_canvas.target = '';
+		_canvas.context = '';
+
+		_canvas.image = '';
+		_canvas.assets = {
+			count: 0,
+			list: [],
+			path: '',
+			type: 'jpg',
+			size: [0,0],
+			current: 0
+		}
+
+		_canvas.init = function() {
+			_canvas.target = opt.target;
+			_canvas.context = _canvas.target.getContext('2d');
+
+			_canvas.assets.count = opt.assets.count;
+			_canvas.assets.path = opt.assets.path;
+			if(opt.assets.type) _canvas.assets.type = opt.assets.type;
+			_canvas.assets.size = opt.assets.size;
+
+			for (let i = 0; i < _canvas.assets.count; i++) {
+				const _src = _canvas.assets.path + ('000' + i).slice(-4) + '.' + _canvas.assets.type;
+
+				const _img = new Image();
+				_img.src = _src;
+
+				_canvas.assets.list.push(_src);
+			}
+
+			_canvas.image = new Image();
+			_canvas.image.src = _canvas.assets.list[0];
+
+			_canvas.target.width = _canvas.assets.size[0];
+			_canvas.target.height = _canvas.assets.size[1];
+
+			_canvas.image.onload = function() {
+				_canvas.context.drawImage(_canvas.image, 0, 0);
+			}
+
+			_canvas.init = null;
+
+			if(opt.init) opt.init(_canvas);
+			// console.log(_canvas);
+		}
+
+		_canvas.update = function(top, bottom) {
+			const _range = (bp.st() - top) / bottom - top;
+
+			let _index = Math.round(_canvas.assets.count * _range);
+			if(_index <= 0) _index = 0;
+			if(_index >= _canvas.assets.count - 1) _index = _canvas.assets.count - 1;
+
+			_canvas.assets.current = _index;
+
+			if(_canvas.assets.list[_index]) {
+				_canvas.image.src = _canvas.assets.list[_index];
+				_canvas.context.drawImage(_canvas.image, 0, 0);
+			}
+			
+			if(bp.debug) console.log(_canvas);
+		}
+
+		if(opt.target) _canvas.init();
 	}
 }
 bp.init();

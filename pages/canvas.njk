@@ -1,0 +1,42 @@
+{% set pageTitle = 'Scrolling Animation' %}
+
+{% extends 'layout.njk' %}
+
+{% block content %}
+{#<div class="section com_height-100"></div>#}
+<div class="section com_height-150">
+    <div class="com_sticky-content">
+        <div class="container bp-rel">
+            <div class="com_canvas-content bp-ab">
+                <canvas id="headphone" data-aspect-ratio="1004,1214"></canvas>
+            </div>
+        </div>
+    </div>
+    {#
+    <div class="container-fluid">
+        <div class="container" style="outline: 1px dashed red;"></div>
+    </div>
+    #}
+</div>
+<div class="section com_height-100"></div>
+{% endblock %}
+
+{% block footerscript %}
+<script>
+    new bp.canvasBanner({
+        target: document.querySelector('#headphone'),
+        assets: {
+            count: 50,
+            path: 'assets/img/headphone/large_',
+            size: [1004,1214]
+        },
+        init: function(canvas) {
+            const _parent = $(canvas.target).closest('.section');
+
+            bp.scrollFn(function() {
+                canvas.update($(_parent).offset().top, $(_parent).offset().top + ($(_parent).outerHeight() * 0.4));
+            });
+        }
+    });
+</script>
+{% endblock %}
