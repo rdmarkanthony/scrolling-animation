@@ -579,14 +579,21 @@ const bp = {
 
 			_bg.target = '';
 			_bg.range = 500;
+			_bg.easing = false;
 
 			_bg.init = function() {
 				_bg.target = opt.target;
 
-				const _dataset = _bg.target.dataset.parallaxBackground;
+				let _dataset = _bg.target.dataset.parallaxBackground;
 				if(_dataset) {
-					_bg.range = parseInt(_dataset);
+					_dataset = _dataset.split(',');
+					if(Number.isInteger(parseInt(_dataset[0]))) _bg.range = parseInt(_dataset[0]);
+					if(_dataset[1]) {
+						if(_dataset[1] == 'easing') _bg.easing = true;
+					}
 				}
+
+				$(_bg.target).css({willChange: 'transform'});
 
 				bp.resizeFn(function() {
 					_bg.resize();
@@ -598,7 +605,6 @@ const bp = {
 				});
 
 				_bg.init = null;
-				// console.log(_bg);
 			}
 
 			_bg.resize = function() {
@@ -609,12 +615,54 @@ const bp = {
 			_bg.update = function() {
 				const _top = $(_bg.target).parent().offset().top - bp.height();
 				const _bottom = _top + $(_bg.target).parent().outerHeight() + bp.height();
-				const _offset = (_bg.range * bp.abs( bp.getOffsetRange(_top, _bottom) )) - (_bg.range * 0.6);
 
-				TweenMax.set(_bg.target, {y: _offset});
+				let _percent = 0.6;
+				if(_bg.easing) _percent = 0.7;
+
+				const _offset = (_bg.range * bp.abs( bp.getOffsetRange(_top, _bottom) )) - (_bg.range * _percent);
+
+				if(_bg.easing) {
+					TweenMax.to(_bg.target, 0.5, {y: _offset, delay: 0.05});
+				} else {
+					TweenMax.set(_bg.target, {y: _offset});
+				}
 			}
 
 			if(opt.target) _bg.init();
+		},
+		floating: function(opt) {
+			const _floating = this;
+
+			_floating.target = '';
+			_floating.range = 50;
+
+			_floating.init = function() {
+				_floating.target = opt.target;
+				console.log(_floating.target.dataset.parallaxFloating);
+
+				const _dataset = _floating.target.dataset.parallaxFloating;
+				if(_dataset) _floating.range = parseInt(_dataset);
+
+				$(_floating.target).css({willChange: 'transform'});
+
+				bp.scrollFn(function() {
+					_floating.update();
+				});
+
+				_floating.init = null;
+				// console.log(_floating);
+			}
+
+			_floating.update = function() {
+				const _top = $(_floating.target).offset().top - bp.height();
+				const _bottom = _top + $(_floating.target).outerHeight() + bp.height();
+				
+				const _offset = bp.abs(bp.getOffsetRange(_top, _bottom));
+				
+				TweenMax.to(_floating.target, 0.5, {y: _floating.range * _offset, delay: 0.05});	
+			}
+
+			if(opt.target) _floating.init();
 		}
 	},
 	canvasBanner: function(opt) {
