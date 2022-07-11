@@ -32,6 +32,11 @@ const bp = {
 			new bp.aspectRatio({target: this});
 		});
 
+		// for links animate
+		$('.links-animate a, .link-animate').each(function() {
+			new bp.linkAnimate({target: this});
+		});
+
 		// for auto scroll
 		$('.auto-scroll').each(function() {
 			$(this).click(function(e) {
@@ -401,6 +406,100 @@ const bp = {
 
 		if(opt.target) _ar.init();
 	},
+	autoScroll: function(target, offset, speed, fnctn) {
+		// if need to change the target
+		let _diffTarget = target.getAttribute('scroll-diff');
+		if(_diffTarget) {
+			_diffTarget = $(target).closest(_diffTarget)[0];
+
+			if(_diffTarget) target = _diffTarget;
+		}
+
+		let _offset = 0;
+		let _gap = 0;
+		if(bp.width() <= 768) _gap = 0;
+		// if going to scroll up, get header height as offset
+		if($(target).offset().top <= bp.st()) {
+			_offset = bp.header.height() + _gap;
+		} else {
+			if(bp.width() > 991) {
+				_offset = _gap;
+			} else {
+				_offset = bp.header.height() + _gap;
+			}
+		}
+		if(parseInt(offset)) _offset = offset;
+
+		let _speed = 700;
+		if(parseInt(speed)) _speed = speed;
+		
+		if(_offset <= 0 && target.dataset.headerNav) _offset = 68;
+
+		$('html').stop().animate({scrollTop: $(target).offset().top -(_offset) }, _speed, false, function() {
+			if(fnctn) fnctn();
+		});
+	},
+	linkAnimate: function(opt) {
+		const _link = this;
+
+		_link.target = '';
+
+		_link.init = function() {
+			_link.target = opt.target;
+
+			$(_link.target).click(function(e) {
+				let _href = this.getAttribute('href');
+
+				const _anchor = _href.toString().split('#');
+				if(_anchor[1]) {
+					const _content = document.querySelector('#' + _anchor[1].split('?')[0]);
+
+					if(_content) {
+						e.preventDefault();
+						_href = false;
+
+						bp.autoScroll(_content, false, false, function() {
+							setTimeout(function() {
+								const _afterOffset = (($(_content).offset().top - bp.st()) - bp.header.height()) * -1;
+								if(_afterOffset <= 50 && _afterOffset > 0) bp.autoScroll(_content, bp.header.height(), 200);
+							}, 300);
+						});
+					} else {
+						_href = false;
+					}
+				}
+
+				const _mailTo = _href.toString().split(':');
+				if(_mailTo[0]) {
+					if(_mailTo[0] == 'mailto' || _mailTo[0] == 'tel') _href = false;
+				}
+
+				if(_href == '#' || this.getAttribute('target') == '_blank') _href = false;
+
+				if(this.getAttribute('link-animate') == 'false') {
+					e.preventDefault();
+
+					_href = false;
+				}
+
+				if(_href) {
+					e.preventDefault();
+
+					const _cover = document.createElement('div');
+					$(_cover).css({zIndex: 9999, position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#fff'});
+					TweenMax.fromTo(_cover, 0.3, {opacity: 0}, {opacity: 1, onComplete: function() {
+						window.open(_href, '_self');
+					}});
+
+					document.querySelector('body').appendChild(_cover);
+				}
+			});
+
+			_link.init = null;
+		}
+		
+		if(opt.target) _link.init();
+	},
 	st: function() { return window.pageYOffset || document.documentElement.scrollTop },
 	abs: function(value) {
 		if(value <= 0) value = 0;
@@ -474,6 +573,48 @@ const bp = {
 			}
 
 			if(opt.target) _scroller.init();
+		},
+		background: function(opt) {
+			const _bg = this;
+
+			_bg.target = '';
+			_bg.range = 500;
+
+			_bg.init = function() {
+				_bg.target = opt.target;
+
+				const _dataset = _bg.target.dataset.parallaxBackground;
+				if(_dataset) {
+					_bg.range = parseInt(_dataset);
+				}
+
+				bp.resizeFn(function() {
+					_bg.resize();
+					_bg.update();
+				});
+
+				bp.scrollFn(function() {
+					_bg.update();
+				});
+
+				_bg.init = null;
+				// console.log(_bg);
+			}
+
+			_bg.resize = function() {
+				$(_bg.target).css({height: ''});
+				$(_bg.target).css({height: _bg.target.offsetHeight + (_bg.range * 0.5)});
+			}
+
+			_bg.update = function() {
+				const _top = $(_bg.target).parent().offset().top - bp.height();
+				const _bottom = _top + $(_bg.target).parent().outerHeight() + bp.height();
+				const _offset = (_bg.range * bp.abs( bp.getOffsetRange(_top, _bottom) )) - (_bg.range * 0.6);
+
+				TweenMax.set(_bg.target, {y: _offset});
+			}
+
+			if(opt.target) _bg.init();
 		}
 	},
 	canvasBanner: function(opt) {

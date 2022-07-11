@@ -1,29 +1,31 @@
-{% set pageTitle = 'Scrolling Animation' %}
+{% set pageTitle = 'Canvas | Scrolling Animation' %}
 
 {% extends 'layout.njk' %}
 
 {% block content %}
 <div class="section com_image-list com_height-50">
-    <div class="container pb50">
-        <h2>Here's the list of image sequence</h2>
-        <p>See below on how it animate thru scrolling</p>
+    <div class="container-fluid">
+        <div class="container pb50">
+            <h2>Here's the list of image sequence</h2>
+            <p>See below on how it animate thru scrolling</p>
+        </div>
+        <script>
+            // for preview only
+            const _list = document.createElement('ul');
+            document.querySelector('.com_image-list .container-fluid').appendChild(_list);
+
+            for (let i = 0; i < 50; i++) {
+                const _item = document.createElement('li');
+                _item.style.display = 'inline-block';
+                _item.style.width = 10 + '%';
+                _list.appendChild(_item);
+
+                const _img = document.createElement('img');
+                _img.src = 'https://www.apple.com/105/media/us/airpods-max/2020/996b980b-3131-44f1-af6c-fe72f9b3bfb5/anim/turn/large/large_'+ ('000' + i).slice(-4) +'.jpg';
+                _item.appendChild(_img);
+            }
+        </script>
     </div>
-    <script>
-        // for preview only
-        const _list = document.createElement('ul');
-        document.querySelector('.com_image-list').appendChild(_list);
-
-        for (let i = 0; i < 50; i++) {
-            const _item = document.createElement('li');
-            _item.style.display = 'inline-block';
-            _item.style.width = 10 + '%';
-            _list.appendChild(_item);
-
-            const _img = document.createElement('img');
-            _img.src = 'https://www.apple.com/105/media/us/airpods-max/2020/996b980b-3131-44f1-af6c-fe72f9b3bfb5/anim/turn/large/large_'+ ('000' + i).slice(-4) +'.jpg';
-            _item.appendChild(_img);
-        }
-    </script>
 </div>
 <div class="section com_height-150">
     <div class="com_sticky-content">
@@ -43,7 +45,7 @@
 {% endblock %}
 
 {% block footerscript %}
-<!-- I exclude this script in custom.js so we can sort out that it is just for this page -->
+<!-- this script is just for this page -->
 <script>
     new bp.canvasBanner({
         target: document.querySelector('#headphone'),

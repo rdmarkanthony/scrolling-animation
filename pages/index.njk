@@ -6,7 +6,13 @@
 <div class="section section-one com_height-100">
     <div class="com_section-content">
         <div class="container-fluid">
-
+            <div class="container">
+                <ul class="links-animate">
+                    <li><a href="#intro">fixed video background</a></li>
+                    <li><a href="canvas.html" target="_blank">canvas</a></li>
+                    <li><a href="background.html" target="_blank">background</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -17,7 +23,7 @@
         </div>
         <div class="com_cover-content"></div>
     </div>
-    <div class="com_section-content">
+    <div id="intro" class="com_section-content">
         <div class="container-fluid">
             <div class="container text-center">
                 <ul class="se-ti-in-list">
@@ -31,11 +37,11 @@
         </div>
     </div>
 </div>
-<div class="section section-three com_height-100"></div>
+<div class="section com_height-100"></div>
 {% endblock %}
 
 {% block footerscript %}
-<!-- I exclude this script in custom.js so we can sort out that it is just for this page -->
+<!-- this script is just for this page -->
 <script>
     // animate the intro section with video banner
     const _titleIntro = new bp.parallax.scroller({
@@ -43,6 +49,9 @@
         init: function(scroller) {
             scroller.el.sc = scroller.target.querySelector('.com_section-content');
             scroller.el.cover = scroller.target.querySelector('.com_cover-content');
+
+            scroller.el.list = scroller.target.querySelectorAll('.se-ti-in-list li');
+            scroller.currentList = 0;
 
             bp.resizeFn(function() {
                 scroller.offset.top = $(scroller.el.sc).offset().top - bp.height();
@@ -52,7 +61,7 @@
             // console.log('init', scroller);
         },
         update: function(scroller, e) {
-            // animate the video cover
+            // animate the video dim cover
             TweenMax.set(scroller.el.cover, {opacity: 1 - bp.abs(scroller.offset.current)});
 
             // animate the titles parent container
@@ -60,39 +69,24 @@
             // TweenMax.set(scroller.el.sc , {opacity: bp.abs(scroller.offset.portion('65%','90%')) });
 
             // portion of scroller offset using diff containers offsets
-            TweenMax.set(scroller.el.sc , {opacity: bp.abs( scroller.offset.portion( $(scroller.el.sc).offset().top - (bp.height() * 0.4), $('.se-ti-in-list', scroller.target).offset().top - (bp.height() * 0.45) ) ) });
+            TweenMax.set(scroller.el.sc , {opacity: bp.abs( scroller.offset.portion( $(scroller.el.sc).offset().top - (bp.height() * 0.4), $('.se-ti-in-list', scroller.target).offset().top - (bp.height() * 0.55) ) ) });
 
-            // console.log('update', scroller.offset.current);
-        }
-    });
-
-    new bp.parallax.scroller({
-        target: _titleIntro.el.sc,
-        init: function(scroller) {
-            scroller.el.list = scroller.target.querySelectorAll('.se-ti-in-list li');
-
-            scroller.currentList = 0;
-
-            bp.resizeFn(function() {
-                scroller.offset.top = $(scroller.target).offset().top;
-                scroller.offset.bottom = $(scroller.target).offset().top + scroller.target.offsetHeight;
-            });
-        },
-        update: function(scroller, e) {
             let _currentList = 0;
 
             // determine which title is in the middle of the display, then will add/remove class
             $(scroller.el.list).each(function(index) {
                 const _this = this;
-                const _offset = bp.st() - ($(_this).offset().top - $(scroller.target).offset().top) - (bp.height() * 0.5) + (_this.offsetHeight * 0.25);
+                const _offset = bp.st() - ($(_this).offset().top - $(scroller.el.sc).offset().top) - (bp.height() * 0.5) + (_this.offsetHeight * 0.25);
 
                 if(_offset >= 0) _currentList = index;
 
-                if(index != scroller.currentList) $(scroller.target).removeClass('text-' + index);
+                if(index != scroller.currentList) $(scroller.el.sc).removeClass('text-' + index);
             });
 
             if(_currentList != scroller.currentList) { scroller.currentList = _currentList; }
-            $(scroller.target).addClass('text-' + scroller.currentList);
+            $(scroller.el.sc).addClass('text-' + scroller.currentList);
+
+            // console.log('update', scroller.offset.current);
         }
     });
 </script>
