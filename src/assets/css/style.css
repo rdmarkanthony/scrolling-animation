@@ -1,15 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,400;1,700&display=swap");
 @import "tailwindcss";
 
-@import "./components/base.css";
-@import "./components/scrolling.css";
-
 /* dark mode via .dark class */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
     --font-sans: "Roboto", "Helvetica", "Calibri", sans-serif;
 
-    --color-default: #000000;
     --color-link: #3189dd;
 }

@@ -50,12 +50,12 @@ class _scrollingAnimation {
         });
 
         // for links animate
-        document.querySelectorAll(".links-animate a, .link-animate").forEach((target) => {
+        document.querySelectorAll(".js-links-animate a, .js-link-animate").forEach((target) => {
             new _linkAnimate({ target });
         });
 
         // for auto scroll
-        document.querySelectorAll(".auto-scroll").forEach((item) => {
+        document.querySelectorAll(".js-auto-scroll").forEach((item) => {
             item.addEventListener("click", (e) => {
                 const _href = item.getAttribute("href") ?? "";
                 const _target = _href.startsWith("#") && document.getElementById(_href.slice(1));

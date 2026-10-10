@@ -3,7 +3,7 @@ import { _autoScroll } from "./_auto-scroll";
 import { _scroll } from "./_scroll";
 
 // links: scroll to anchors on the page, or fade the page out before leaving
-// skip with link-animate="false"
+// skip with data-link-animate="false"
 export class _linkAnimate {
     constructor(props) {
         this.target = props.target ?? null;
@@ -17,7 +17,7 @@ export class _linkAnimate {
 
     click(e) {
         const _href = this.target.getAttribute("href") ?? "";
-        const _disabled = this.target.getAttribute("link-animate") === "false";
+        const _disabled = this.target.dataset.linkAnimate === "false";
 
         // anchor on this page, scroll to it
         const _anchor = _href.split("#")[1];

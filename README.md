@@ -47,6 +47,8 @@ Pages use `layout: base.njk` in front matter. To add page-specific markup to the
 Each page's animation script is in its `{% footerscript %}`, right below the main `script.js`, so a section and its script can be copied together. The comment at the top of each script lists the files it needs.
 
 - Use `<script type="module">` so the page script runs after `script.js`.
+- Scripts find elements by `js-` classes (e.g. `js-title-intro`, `js-canvas-section`) or `data-` attributes (e.g. `data-parallax-background`); styling stays in the Tailwind classes.
+- Shared hooks handled by `script.js`: `js-links-animate` (on a list of links) or `js-link-animate` (on a link) to scroll to anchors or fade out before leaving, `js-auto-scroll` for anchor links, and `data-aspect-ratio`.
 - `script.js` exposes `gsap` and the utils from `src/assets/js/utils/` on `window` (e.g. `_scroller`, `_canvasBanner`, `_parallaxBackground`).
 
 ### SEO

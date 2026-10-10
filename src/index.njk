@@ -3,41 +3,41 @@ layout: base.njk
 title: Scrolling Animation
 ---
 
-<div class="section section-one relative z-[2] min-h-screen bg-white">
-    <div class="com_section-content">
-        <div class="px-[15px] py-[100px]">
+<div class="relative z-2 min-h-screen bg-white outline outline-dashed outline-green-700">
+    <div class="relative z-3">
+        <div class="px-3.75 py-25">
             <div class="mx-auto max-w-5xl">
-                <ul class="links-animate">
-                    <li><a href="#intro">fixed video background</a></li>
-                    <li><a href="/canvas/" target="_blank">canvas</a></li>
-                    <li><a href="/background/" target="_blank">background</a></li>
+                <ul class="js-links-animate text-xl">
+                    <li><a class="text-link" href="#intro">fixed video background</a></li>
+                    <li><a class="text-link" href="/canvas/" target="_blank">canvas</a></li>
+                    <li><a class="text-link" href="/background/" target="_blank">background</a></li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
-<div class="section section-title-intro min-h-[150vh]">
-    <div class="com_sticky-content">
-        <div class="com_video-content content-cover">
-            <video muted playsinline loop autoplay preload="none" src="/assets/video/video1.mp4"></video>
+<div class="js-title-intro relative z-1 min-h-[150vh] bg-black text-white outline outline-dashed outline-red-400">
+    <div class="sticky top-0 -mt-[100vh] h-screen w-full overflow-hidden">
+        <div class="absolute inset-0 after:absolute after:inset-0 after:z-2 after:bg-black/20">
+            <video class="absolute inset-0 size-full object-cover" muted playsinline loop autoplay preload="none" src="/assets/video/video1.mp4"></video>
         </div>
-        <div class="com_cover-content"></div>
+        <div class="js-title-intro-cover absolute inset-0 z-1 bg-black"></div>
     </div>
-    <div id="intro" class="com_section-content">
-        <div class="px-[15px]">
+    <div id="intro" class="js-title-intro-content relative z-2 pt-[50vh] pb-[35vh]">
+        <div class="px-3.75">
             <div class="mx-auto max-w-5xl text-center">
-                <ul class="se-ti-in-list">
-                    <li><h1>Lorem ipsum dolor sit amet</h1></li>
-                    <li><h1>consectetur adipiscing elit, sed do eiusmod tempor</h1></li>
-                    <li><h1>Ut enim ad minim veniam</h1></li>
-                    <li><h1>quis nostrud exercitation ullamco laboris nisi ut</h1></li>
-                    <li><h1>Duis aute irure dolor in reprehenderit in voluptate velit esse</h1></li>
+                <ul class="js-title-intro-list">
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">Lorem ipsum dolor sit amet</h1></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">consectetur adipiscing elit, sed do eiusmod tempor</h1></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">Ut enim ad minim veniam</h1></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">quis nostrud exercitation ullamco laboris nisi ut</h1></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">Duis aute irure dolor in reprehenderit in voluptate velit esse</h1></li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
-<div class="section min-h-screen"></div>
+<div class="relative min-h-screen outline outline-dashed outline-green-700"></div>
 
 {% footerscript %}
 <!-- this script is just for this page -->
@@ -48,17 +48,15 @@ title: Scrolling Animation
             // src/assets/js/utils/_event.js
             // src/assets/js/utils/_scroll.js
             // src/assets/js/utils/_scroller.js
-        // CSS
-            // src/assets/css/components/scrolling.css (.section-title-intro)
 
     // animate the intro section with video banner
     new _scroller({
-        target: document.querySelector('.section-title-intro'),
+        target: document.querySelector('.js-title-intro'),
         init(scroller) {
-            scroller.el.sc = scroller.target.querySelector('.com_section-content');
-            scroller.el.cover = scroller.target.querySelector('.com_cover-content');
-            scroller.el.listWrap = scroller.target.querySelector('.se-ti-in-list');
-            scroller.el.list = scroller.target.querySelectorAll('.se-ti-in-list li');
+            scroller.el.sc = scroller.target.querySelector('.js-title-intro-content');
+            scroller.el.cover = scroller.target.querySelector('.js-title-intro-cover');
+            scroller.el.listWrap = scroller.target.querySelector('.js-title-intro-list');
+            scroller.el.list = scroller.target.querySelectorAll('.js-title-intro-list li');
             scroller.currentList = 0;
 
             _event.resize(() => {
@@ -82,17 +80,19 @@ title: Scrolling Animation
 
             let _currentList = 0;
 
-            // determine which title is in the middle of the display, then will add/remove class
+            // determine which title is in the middle of the display
             scroller.el.list.forEach((item, index) => {
                 const _offset = _scroll.top() - (_scroll.offset(item) - _scTop) - _height * 0.5 + item.offsetHeight * 0.25;
 
                 if (_offset >= 0) _currentList = index;
-
-                if (index !== scroller.currentList) scroller.el.sc.classList.remove(`text-${index}`);
             });
 
             scroller.currentList = _currentList;
-            scroller.el.sc.classList.add(`text-${scroller.currentList}`);
+
+            // show the current title, move the previous ones up (see data-[state] classes on each li)
+            scroller.el.list.forEach((item, index) => {
+                item.dataset.state = index < _currentList ? 'past' : index === _currentList ? 'active' : '';
+            });
         },
     });
 </script>
