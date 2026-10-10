@@ -62,13 +62,13 @@ class _scrollingAnimation {
                 if (!_target) return;
 
                 e.preventDefault();
-                _autoScroll(_target);
+                _autoScroll({ target: _target });
             });
         });
 
         // for hash on load
         const _hashTarget = window.location.hash && document.getElementById(window.location.hash.slice(1).split("?")[0]);
-        if (_hashTarget) setTimeout(() => _autoScroll(_hashTarget, { offset: this.el.header?.offsetHeight }), 500);
+        if (_hashTarget) setTimeout(() => _autoScroll({ target: _hashTarget }), 500);
 
         if (this.debug) console.log("_scrollingAnimation", this);
     }

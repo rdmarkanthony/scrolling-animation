@@ -1,29 +1,38 @@
 import { gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { _event } from "./_event";
 import { _scroll } from "./_scroll";
 
 gsap.registerPlugin(ScrollToPlugin);
 
-export const _autoScroll = (target, props = {}) => {
+// usage: _autoScroll({ target, offset, speed, ease, callback })
+export const _autoScroll = ({ target, offset, speed = 500, ease = "power2.out", callback } = {}) => {
+    if (!target) return;
+
     // if need to scroll to parent of the target
-    const _diffTarget = target.dataset.scrollDiff;
-    if (_diffTarget) target = target.closest(_diffTarget) ?? target;
+    const _parent = target.dataset.scrollParent && target.closest(target.dataset.scrollParent);
+    if (_parent) target = _parent;
 
-    const _headerHeight = document.querySelector(".header-content")?.offsetHeight ?? 0;
+    // for direction
+    const _targetTop = _scroll.offset(target);
+    const _direction = _scroll.top() > _targetTop ? "up" : "down";
 
-    // for offset
-    let _offset = _scroll.offset(target) <= _scroll.top() || _event.width() <= 991 ? _headerHeight : 0;
-    if (parseInt(props.offset)) _offset = props.offset;
-    if (_offset <= 0 && target.dataset.headerNav) _offset = 68;
+    // for offset, only a fixed or sticky header covers the target
+    const _header = document.querySelector(".header-content");
+    const _headerHeight = _header && ["fixed", "sticky"].includes(getComputedStyle(_header).position) ? _header.offsetHeight : 0;
+    const _offset = offset ?? _headerHeight;
 
-    const _speed = parseInt(props.speed) || 700;
+    let _y = _targetTop - _offset;
+    if (_headerHeight > _y) _y = 0;
+    _y = Math.max(0, Math.round(_y));
+
+    // for speed
+    const _reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     gsap.to(window, {
-        duration: _speed / 1000,
-        scrollTo: { y: _scroll.offset(target) - _offset },
-        ease: "sine.inOut",
+        scrollTo: { y: _y, autoKill: false },
+        duration: _reduce ? 0 : speed / 1000,
+        ease,
         overwrite: true,
-        onComplete: () => props.callback?.(),
+        onComplete: () => callback?.({ target, direction: _direction, offset: _offset, y: _y }),
     });
 };
