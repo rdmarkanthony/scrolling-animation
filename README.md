@@ -24,7 +24,8 @@ With pnpm, use `pnpm install`, `pnpm dev` and `pnpm build`.
 
 ### Files
 
-- `src/index.njk`, `src/canvas.njk`, `src/background.njk` – the demo pages, each with its markup and page script
+- `src/index.njk` – the home page, with the demo list and util reference
+- `src/video-intro.njk`, `src/canvas.njk`, `src/background.njk` – the demo pages, each with its markup and page script
 - `src/assets/js/utils/` – the utils
 - `src/assets/js/script.js` – loads the utils and puts them on `window`
 - `src/assets/img/`, `src/assets/video/` – the demo images and videos
@@ -242,12 +243,12 @@ If the source isn't H.264, or its keyframes are far apart (long segments), re-en
 Smooth scrolls to an element. `script.js` sets it up for every `.js-auto-scroll` link, and for the hash in the URL on load.
 
 ```html
-<a class="js-auto-scroll" href="#intro">See the intro demo</a>
+<a class="js-auto-scroll" href="#demos">See the demos</a>
 ```
 
 ```js
 _autoScroll({
-    target: document.getElementById("intro"),
+    target: document.getElementById("demos"),
     offset: 0, // default: the header's height, if it's fixed or sticky
     speed: 500, // in ms
     ease: "power2.out",

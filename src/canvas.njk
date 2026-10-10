@@ -43,7 +43,7 @@ title: Canvas | Scrolling Animation
             <div class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
                 <div>
                     <h3 class="mb-2 text-xl font-semibold">Markup</h3>
-                    <p class="text-gray-600">A tall section with a sticky, screen-high wrapper. The canvas stays pinned while the section scrolls past. With <code class="font-mono text-sm">resizeMode: 'contain'</code> the script fits it inside the wrapper at its frame ratio.</p>
+                    <p class="text-gray-600">A tall section with a sticky, screen-high wrapper. The canvas stays pinned while the section scrolls past. With <code class="font-mono text-sm">resizeMode: 'contain'</code> the script fits it inside the wrapper at its frame ratio. It's drawn at the screen's pixel density, up to the frame size, so it stays sharp.</p>
                 </div>
                 {% set code %}{% raw %}
 <section class="js-canvas-section relative min-h-[300vh]">
