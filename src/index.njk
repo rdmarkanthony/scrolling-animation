@@ -7,9 +7,9 @@ title: Scrolling Animation
 
 <section class="px-4 pt-24 pb-16 md:pt-32">
     <div class="mx-auto max-w-295">
-        <p class="mb-4 font-mono text-sm text-gray-500">11ty · Nunjucks · Tailwind · gsap</p>
+        <p class="mb-4 font-mono text-sm text-gray-500">JavaScript · gsap · any HTML page</p>
         <h1 class="mb-6 text-5xl font-bold tracking-tight md:text-7xl">Scrolling Animation</h1>
-        <p class="mb-10 max-w-2xl text-lg text-gray-600 md:text-xl">Scroll-driven animations for 11ty pages. Each demo is a section of markup with a short script under it, so you can copy one into your own page.</p>
+        <p class="mb-10 max-w-2xl text-lg text-gray-600 md:text-xl">Animations that follow the scroll: video intros, image sequences and parallax backgrounds. Each demo shows its markup and script, ready to use on any website.</p>
         <div class="flex flex-wrap gap-3">
             <a class="js-auto-scroll rounded-full bg-gray-950 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-700" href="#demos">See the demos</a>
             <a class="rounded-full border border-gray-300 px-5 py-3 text-sm font-medium text-gray-950 transition-colors hover:border-gray-950" href="https://github.com/rdmarkanthony/scrolling-animation" target="_blank" rel="noopener">View on GitHub</a>
@@ -51,7 +51,7 @@ title: Scrolling Animation
                 <div>
                     <p class="mb-2 font-mono text-sm text-gray-500">01</p>
                     <h3 class="mb-2 text-xl font-semibold">script.js loads the utils</h3>
-                    <p class="text-gray-600">It runs the shared setup for every page and puts every util on <code class="font-mono text-sm">window</code> for page scripts.</p>
+                    <p class="text-gray-600">It imports gsap and the utils, runs the shared setup for every page, and puts every util on <code class="font-mono text-sm">window</code> for page scripts. Bundle it with any bundler, this site uses esbuild.</p>
                 </div>
                 {% set code %}{% raw %}
 // src/assets/js/script.js
@@ -73,7 +73,7 @@ Object.assign(window, {
                 <div>
                     <p class="mb-2 font-mono text-sm text-gray-500">02</p>
                     <h3 class="mb-2 text-xl font-semibold">Mark up the section</h3>
-                    <p class="text-gray-600">Style with Tailwind classes. Add <code class="font-mono text-sm">js-</code> classes for elements the script looks up, and <code class="font-mono text-sm">data-</code> attributes for options.</p>
+                    <p class="text-gray-600">Style it however you like, the demos use Tailwind. Add <code class="font-mono text-sm">js-</code> classes for elements the script looks up, and <code class="font-mono text-sm">data-</code> attributes for options.</p>
                 </div>
                 {% set code %}{% raw %}
 <div class="js-fade-section relative min-h-screen bg-black text-white">
@@ -86,10 +86,10 @@ Object.assign(window, {
                 <div>
                     <p class="mb-2 font-mono text-sm text-gray-500">03</p>
                     <h3 class="mb-2 text-xl font-semibold">Add the page script</h3>
-                    <p class="text-gray-600">Put it in <code class="font-mono text-sm">{% raw %}{% footerscript %}{% endraw %}</code> so it renders below <code class="font-mono text-sm">script.js</code>. Use <code class="font-mono text-sm">type="module"</code> so it runs after it.</p>
+                    <p class="text-gray-600">Add it below <code class="font-mono text-sm">script.js</code>, both as <code class="font-mono text-sm">type="module"</code> so it runs after the utils are loaded. On this site, pages put it in <code class="font-mono text-sm">{% raw %}{% footerscript %}{% endraw %}</code>, which renders below <code class="font-mono text-sm">script.js</code>.</p>
                 </div>
                 {% set code %}{% raw %}
-{% footerscript %}
+<script type="module" src="/assets/js/script.js"></script>
 <script type="module">
     new _parallaxScroller({
         target: document.querySelector('.js-fade-section'),
@@ -101,9 +101,8 @@ Object.assign(window, {
         },
     });
 </script>
-{% endfooterscript %}
                 {% endraw %}{% endset %}
-                {{ codeBlock(code, 'njk') }}
+                {{ codeBlock(code, 'html') }}
             </li>
         </ol>
     </div>

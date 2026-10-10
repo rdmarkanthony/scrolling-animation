@@ -1,6 +1,8 @@
 ## Scrolling Animation
 
-Scroll-driven animation demos and the utils behind them: fixed video background with title sequence, canvas image sequence, and parallax backgrounds.
+Scroll-driven animations for any HTML page: fixed video background with title sequence, canvas image sequence, and parallax backgrounds.
+
+This demo site is built with 11ty, Nunjucks and Tailwind.
 
 Live demo: https://scrolling-animation.web.app/
 
@@ -62,7 +64,14 @@ With pnpm, use `pnpm install`, `pnpm dev` and `pnpm build`.
 {% endfooterscript %}
 ```
 
-To use a util in another project, copy its file from `src/assets/js/utils/` together with `_event.js`, and install `gsap` (and `hls.js` for videos).
+To use a util in another project, copy its file from `src/assets/js/utils/` together with `_event.js`, and install `gsap` (and `hls.js` for videos). Import them in your own script, or bundle a `script.js` like this one and load the page script after it:
+
+```html
+<script type="module" src="/assets/js/script.js"></script>
+<script type="module">
+    new _parallaxScroller({ target: document.querySelector(".js-fade-section"), events: { update(scroller) {} } });
+</script>
+```
 
 ## Functions
 
