@@ -1,10 +1,17 @@
 import prettier from "prettier";
 
 export default function (eleventyConfig) {
-    // update Nunjucks environment options
+    // update njk environment options
     eleventyConfig.setNunjucksEnvironmentOptions({
         trimBlocks: true,
         lstripBlocks: true,
+    });
+
+    eleventyConfig.setServerOptions({
+        // reload on css/js output change
+        watch: ["public/assets/**/*.css", "public/assets/**/*.js"],
+        // show network url for mobile preview
+        showAllHosts: true,
     });
 
     // page slots for base.njk, e.g. {% footerscript %}<script type="module">...</script>{% endfooterscript %}
@@ -13,11 +20,9 @@ export default function (eleventyConfig) {
     eleventyConfig.addBundle("popup");
     eleventyConfig.addBundle("footerscript");
 
-    // watch css change
-    eleventyConfig.addWatchTarget("src/assets/css/");
-
     // port the assets
     eleventyConfig.addPassthroughCopy("src/assets/img");
+    eleventyConfig.addPassthroughCopy({ "src/assets/favicon": "favicon" });
     eleventyConfig.addPassthroughCopy("src/assets/video");
     // eleventyConfig.addPassthroughCopy("src/assets/data");
 

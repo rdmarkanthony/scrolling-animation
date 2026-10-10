@@ -75,8 +75,6 @@ class _scrollingAnimation {
 
     resize(state) {
         // states: init, ready, resize, after
-        document.body.style.setProperty("--header-height", `${this.el.header?.offsetHeight ?? 0}px`);
-        document.body.style.setProperty("--footer-height", `${this.el.footer?.offsetHeight ?? 0}px`);
     }
 }
 

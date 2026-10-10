@@ -7,15 +7,16 @@
         "node": ">=20"
     },
     "scripts": {
-        "start": "npm-run-all -p 'dev:*'",
-        "dev": "npm-run-all -p 'dev:*'",
-        "dev:eleventy": "eleventy --serve --watch",
+        "start": "npm-run-all -s clean -p 'dev:*'",
+        "dev": "npm-run-all -s clean -p 'dev:*'",
+        "dev:eleventy": "eleventy --serve",
         "dev:css": "tailwindcss -i ./src/assets/css/style.css -o ./public/assets/css/style.css --watch",
         "dev:js": "node esbuild.config.js --watch",
-        "build": "npm-run-all -s 'build:*'",
+        "build": "npm-run-all -s clean 'build:*'",
         "build:eleventy": "eleventy",
         "build:css": "tailwindcss -i ./src/assets/css/style.css -o ./public/assets/css/style.css --minify",
         "build:js": "node esbuild.config.js",
+        "clean": "node -e \"require('fs').rmSync('public', { recursive: true, force: true })\"",
         "format": "prettier --write ."
     },
     "author": "RippleWerkz",

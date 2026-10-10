@@ -4,6 +4,9 @@
 @import "./components/base.css";
 @import "./components/scrolling.css";
 
+/* dark mode via .dark class */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
     --font-sans: "Roboto", "Helvetica", "Calibri", sans-serif;
 
