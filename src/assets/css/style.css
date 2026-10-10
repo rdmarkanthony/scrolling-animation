@@ -2,7 +2,6 @@
 @import "tailwindcss";
 
 @import "./components/base.css";
-@import "./components/animate.css";
 @import "./components/scrolling.css";
 
 @theme {

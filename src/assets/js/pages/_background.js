@@ -1,15 +1,16 @@
-import { bp } from "../utils/_bp";
+import { _parallaxBackground } from "../utils/_parallax-background";
+import { _parallaxFloating } from "../utils/_parallax-floating";
 
-export const background = {
+export const _background = {
     init() {
         // for parallax background
         document.querySelectorAll("[data-parallax-background]").forEach((target) => {
-            new bp.parallax.background({ target });
+            new _parallaxBackground({ target });
         });
 
         // for floating content
         document.querySelectorAll("[data-parallax-floating]").forEach((target) => {
-            new bp.parallax.floating({ target });
+            new _parallaxFloating({ target });
         });
     },
 };
