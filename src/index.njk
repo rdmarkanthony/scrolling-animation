@@ -220,7 +220,7 @@ _parallax.getOffset(el);      // { top, left, bottom, right } in the document, t
 _parallax.getRange(min, max); // 0 at min, 1 at max, unclamped
 _parallax.clamp(value);       // limit to 0 - 1
 
-_event.resize((state) => {});  // state: init, ready, resize, after
+_event.resize((state) => {});  // state: init, ready, resize, after, skips the phone address bar
 _event.scroll((e) => {});      // runs once now, then at most once per frame while scrolling
 _event.observeResize((entry) => {}, el); // el changes size, e.g. images load above it
 

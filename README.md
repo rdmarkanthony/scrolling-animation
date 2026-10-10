@@ -150,7 +150,7 @@ document.querySelectorAll("[data-parallax-floating]").forEach((target) => {
 
 `src/assets/js/utils/_canvasBanner.js`
 
-Preloads an image sequence and draws the frame for a progress from 0 to 1. Pair it with `_parallaxScroller` to scrub through the frames on scroll.
+Loads an image sequence and draws the frame for a progress from 0 to 1. Pair it with `_parallaxScroller` to scrub through the frames on scroll.
 
 ```html
 <section class="js-canvas-section relative min-h-[300vh]">
@@ -169,6 +169,13 @@ const canvas = new _canvasBanner({
         digits: 4,
         size: [1004, 1214],
         resizeMode: "contain",
+        // below 768px wide
+        mobile: {
+            path: "/assets/img/headphone/small_",
+            type: "webp",
+            size: [502, 607],
+            step: 2,
+        },
     },
     transition: { duration: 150 },
 });
@@ -196,10 +203,15 @@ Frames are named `path` + a zero-padded number + `.type`, starting at 0, e.g. `l
 - `assets.digits` – zero-padding length (default: digits of the last frame number)
 - `assets.size` – `[width, height]` of the frames
 - `assets.resizeMode` – `width` (default) fills the parent's width, `height` fills its height, `contain` fits inside it
+- `assets.step` – use every nth frame (default `1`), e.g. `2` for half the frames, the last frame is always kept
+- `assets.buffer` – frames kept loaded before and after the current one (default `20`), further ones are unloaded to save memory
+- `assets.mobile` – any of `path`, `type`, `size`, `step`, `buffer` to use instead below 768px wide, or when `media` matches, e.g. `media: "(max-width: 1023px)"`
 - `transition.duration` – crossfade between frames in ms (default `0`)
 - `events` – `init`, `resize`, `beforeUpdate`, `afterUpdate`, or add them with `on()` / `off()`
 
 The canvas sizes itself to its parent's content box, sharp on high density screens but never bigger than the frames.
+
+Frames are decoded before they're drawn (off the main thread with `fetch` and `createImageBitmap`), nearest to the current frame first. Until a frame is ready the nearest loaded one is drawn, so fast scrolling never waits. Frames on another domain need CORS headers for `fetch`, otherwise they load as plain images. On phones, use the `mobile` option for frames about half the size: each decoded frame takes width × height × 4 bytes of memory, so 50 frames at 1004×1214 take about 240MB.
 
 ### \_hlsVideo
 
@@ -267,7 +279,7 @@ _parallax.clamp(value); // limit to 0 - 1
 Keeps one scroll and one resize listener for the whole page, however many callbacks are added. Every subscribe runs the callback once right away and returns a function that removes it.
 
 ```js
-_event.resize((state) => {}); // state: init, ready, resize, after
+_event.resize((state) => {}); // state: init, ready, resize, after, skips the phone address bar showing or hiding
 _event.scroll((e) => {}); // at most once per frame while scrolling
 _event.observeResize((entry) => {}, el); // el changes size, e.g. images load above it (default: body)
 

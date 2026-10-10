@@ -1,24 +1,41 @@
 import { _event } from "./_event";
 
-// usage: new _canvasBanner({ target, assets: { count, path, type, digits, size, resizeMode }, transition: { duration }, events })
+// usage: new _canvasBanner({ target, assets: { count, path, type, digits, size, resizeMode, step, buffer, mobile }, transition: { duration }, events })
+// assets.mobile: { path, type, size, step, media }, replaces those options when media matches (default below 768px)
 export class _canvasBanner {
     constructor(props) {
         this.target = props.target ?? null;
         this.context = this.target?.getContext("2d");
 
+        // for smaller frames on phones
+        const _mobile = props.assets?.mobile;
+        const _assets = _mobile && window.matchMedia(_mobile.media ?? "(max-width: 767px)").matches ? { ...props.assets, ..._mobile } : (props.assets ?? {});
+
         this.image = null;
         this.assets = {
-            count: props.assets?.count ?? 0,
-            list: [],
-            path: props.assets?.path ?? "",
-            type: props.assets?.type ?? "jpg",
-            digits: props.assets?.digits ?? String((props.assets?.count ?? 1) - 1).length,
-            size: props.assets?.size ?? [0, 0],
-            resizeMode: props.assets?.resizeMode ?? "width", // width, height or contain
+            count: _assets.count ?? 0,
+            frames: [], // file number of each frame
+            list: [], // decoded frames, null until loaded
+            path: _assets.path ?? "",
+            type: _assets.type ?? "jpg",
+            digits: _assets.digits ?? String((_assets.count ?? 1) - 1).length,
+            size: _assets.size ?? [0, 0],
+            resizeMode: _assets.resizeMode ?? "width", // width, height or contain
+            step: Math.max(_assets.step ?? 1, 1), // 2 skips every other frame
+            buffer: _assets.buffer ?? 20, // frames kept loaded before and after the current one
             current: 0,
+            shown: -1,
+        };
+
+        this.loading = {
+            queue: [],
+            pending: new Set(),
+            active: 0,
+            concurrency: 6,
         };
 
         this.debug = props.debug ?? false;
+        this.destroyed = false;
 
         this.transition = {
             duration: props.transition?.duration ?? 0,
@@ -34,17 +51,13 @@ export class _canvasBanner {
     }
 
     init() {
-        // get all the images
-        for (let i = 0; i < this.assets.count; i++) {
-            const _img = new Image();
-            _img.src = `${this.assets.path}${String(i).padStart(this.assets.digits, "0")}.${this.assets.type}`;
+        // every step frames, always with the last one
+        for (let i = 0; i < this.assets.count; i += this.assets.step) this.assets.frames.push(i);
+        if (this.assets.count && this.assets.frames.at(-1) !== this.assets.count - 1) this.assets.frames.push(this.assets.count - 1);
 
-            this.assets.list.push(_img);
-        }
+        this.assets.list = new Array(this.assets.frames.length).fill(null);
 
-        // load the first image
-        this.image = this.assets.list[0];
-        this.loaded(this.image, () => this.draw());
+        this.load();
 
         // for resize
         this.unsubscribe.push(_event.observeResize(() => this.resize(), this.target.parentElement));
@@ -54,30 +67,115 @@ export class _canvasBanner {
 
     // progress from 0 (first frame) to 1 (last frame)
     update(progress = 0) {
-        const _index = Math.round(Math.min(Math.max(progress, 0), 1) * (this.assets.count - 1));
-        if (_index === this.assets.current || !this.assets.list[_index]) return;
+        const _index = Math.round(Math.min(Math.max(progress, 0), 1) * (this.assets.list.length - 1));
+        if (_index === this.assets.current || !this.assets.list.length) return;
 
         this.emit("beforeUpdate");
 
-        const _previousImage = this.image;
-        const _nextImage = this.assets.list[_index];
-
-        this.image = _nextImage;
         this.assets.current = _index;
 
-        // skip if another frame was picked while loading
-        this.loaded(_nextImage, () => {
-            if (this.image === _nextImage) this.fade(_previousImage, _nextImage);
-        });
+        this.load();
+        this.show();
 
         if (this.debug) console.log(this);
         this.emit("afterUpdate");
     }
 
+    // draw the current frame, or the nearest loaded one until it loads
+    show() {
+        const _index = this.nearest(this.assets.current);
+        if (_index < 0 || _index === this.assets.shown) return;
+
+        const _previousImage = this.image;
+
+        this.image = this.assets.list[_index];
+        this.assets.shown = _index;
+
+        this.fade(_previousImage, this.image);
+    }
+
+    // index of the loaded frame nearest to the given one
+    nearest(index) {
+        for (let i = 0; i < this.assets.list.length; i++) {
+            if (this.assets.list[index - i]) return index - i;
+            if (this.assets.list[index + i]) return index + i;
+        }
+
+        return -1;
+    }
+
+    // load the frames around the current one, nearest first
+    load() {
+        const { list, current, buffer } = this.assets;
+
+        // unload the frames outside the buffer, but not the one on screen
+        list.forEach((frame, index) => {
+            if (!frame || index === this.assets.shown || Math.abs(index - current) <= buffer) return;
+
+            frame.close?.();
+            list[index] = null;
+        });
+
+        this.loading.queue = [];
+        for (let i = 0; i <= buffer; i++) {
+            [current + i, current - i].forEach((index) => {
+                if (index < 0 || index >= list.length || list[index] || this.loading.pending.has(index) || this.loading.queue.includes(index)) return;
+                this.loading.queue.push(index);
+            });
+        }
+
+        this.next();
+    }
+
+    // start loading from the queue, a few at a time
+    next() {
+        while (this.loading.active < this.loading.concurrency && this.loading.queue.length) {
+            const _index = this.loading.queue.shift();
+
+            this.loading.active++;
+            this.loading.pending.add(_index);
+
+            this.decode(this.src(_index))
+                .then((frame) => {
+                    // skip if scrolled out of the buffer while loading
+                    if (this.destroyed || Math.abs(_index - this.assets.current) > this.assets.buffer) return frame.close?.();
+
+                    this.assets.list[_index] = frame;
+                    this.show();
+                })
+                .catch(() => {})
+                .finally(() => {
+                    this.loading.active--;
+                    this.loading.pending.delete(_index);
+                    if (!this.destroyed) this.next();
+                });
+        }
+    }
+
+    // decoded before drawing, off the main thread where supported
+    async decode(src) {
+        if (window.createImageBitmap) {
+            try {
+                const _response = await fetch(src);
+                if (_response.ok) return await createImageBitmap(await _response.blob());
+            } catch {}
+        }
+
+        const _img = new Image();
+        _img.src = src;
+        await _img.decode();
+
+        return _img;
+    }
+
+    src(index) {
+        return `${this.assets.path}${String(this.assets.frames[index]).padStart(this.assets.digits, "0")}.${this.assets.type}`;
+    }
+
     fade(previousImage, nextImage) {
         cancelAnimationFrame(this.transition.raf);
 
-        if (!this.transition.duration) {
+        if (!this.transition.duration || !previousImage) {
             this.transition.active = false;
             this.draw(nextImage);
             return;
@@ -106,7 +204,8 @@ export class _canvasBanner {
     }
 
     draw(image = this.image, alpha = 1, clear = true) {
-        if (!image?.complete || !image.naturalWidth) return;
+        // skip unloaded frames
+        if (!image?.width) return;
 
         if (clear) this.context.clearRect(0, 0, this.target.width, this.target.height);
 
@@ -138,20 +237,18 @@ export class _canvasBanner {
 
         // sharp on high density screens, but no bigger than the images
         const _scale = Math.min(window.devicePixelRatio || 1, this.assets.size[0] / _width);
-        this.target.width = Math.round(_width * _scale);
-        this.target.height = Math.round(_height * _scale);
+        const _canvasWidth = Math.round(_width * _scale);
+        const _canvasHeight = Math.round(_height * _scale);
 
-        if (!this.transition.active) this.draw();
+        // setting the size clears the canvas, so only when it changed
+        if (this.target.width !== _canvasWidth || this.target.height !== _canvasHeight) {
+            this.target.width = _canvasWidth;
+            this.target.height = _canvasHeight;
+
+            if (!this.transition.active) this.draw();
+        }
 
         this.emit("resize");
-    }
-
-    loaded(image, callback) {
-        if (image.complete && image.naturalWidth) {
-            callback();
-        } else {
-            image.addEventListener("load", callback, { once: true });
-        }
     }
 
     // register event listener
@@ -172,7 +269,12 @@ export class _canvasBanner {
     }
 
     destroy() {
+        this.destroyed = true;
         cancelAnimationFrame(this.transition.raf);
+        this.loading.queue = [];
+        this.assets.list.forEach((frame) => frame?.close?.());
+        this.assets.list = [];
+        this.image = null;
         this.unsubscribe.forEach((off) => off());
         this.unsubscribe = [];
         this.listeners = {};
