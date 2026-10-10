@@ -5,15 +5,24 @@ title: Scrolling Animation
 
 {% from "components/code-block.njk" import codeBlock %}
 
-<section class="px-4 pt-24 pb-16 md:pt-32">
-    <div class="mx-auto max-w-295">
-        <p class="mb-4 font-mono text-sm text-gray-500">JavaScript · gsap · any HTML page</p>
-        <h1 class="mb-6 text-5xl font-bold tracking-tight md:text-7xl">Scrolling Animation</h1>
-        <p class="mb-10 max-w-2xl text-lg text-gray-600 md:text-xl">Animations that follow the scroll: video intros, image sequences and parallax backgrounds. Each demo shows its markup and script, ready to use on any website.</p>
-        <div class="flex flex-wrap gap-3">
-            <a class="js-auto-scroll rounded-full bg-gray-950 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-700" href="#demos">See the demos</a>
-            <a class="rounded-full border border-gray-300 px-5 py-3 text-sm font-medium text-gray-950 transition-colors hover:border-gray-950" href="https://github.com/rdmarkanthony/scrolling-animation" target="_blank" rel="noopener">View on GitHub</a>
+{# hero: the headphone turns as the page scrolls #}
+<section class="js-hero relative h-[250vh]">
+    <div class="sticky top-0 h-screen overflow-hidden px-4">
+        <div class="mx-auto grid h-full max-w-295 grid-rows-[auto_1fr] gap-6 pt-24 pb-6 md:grid-cols-2 md:grid-rows-1 md:items-center md:gap-10 md:py-0">
+            <div>
+                <p class="mb-4 font-mono text-sm text-gray-500">11ty · Nunjucks · Tailwind · gsap</p>
+                <h1 class="mb-6 text-5xl font-bold tracking-tight md:text-7xl">Scrolling Animation</h1>
+                <p class="mb-10 max-w-2xl text-lg text-gray-600 md:text-xl">Animations that follow the scroll: video intros, image sequences and parallax backgrounds. Each demo shows its markup and script, ready to use on any website.</p>
+                <div class="flex flex-wrap gap-3">
+                    <a class="js-auto-scroll rounded-full bg-gray-950 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-700" href="#demos">See the demos</a>
+                    <a class="rounded-full border border-gray-300 px-5 py-3 text-sm font-medium text-gray-950 transition-colors hover:border-gray-950" href="https://github.com/rdmarkanthony/scrolling-animation" target="_blank" rel="noopener">View on GitHub</a>
+                </div>
+            </div>
+            <div class="flex min-h-0 items-center justify-center md:h-full md:py-16">
+                <canvas class="js-hero-canvas"></canvas>
+            </div>
         </div>
+        <p class="js-hero-hint absolute bottom-6 left-1/2 hidden -translate-x-1/2 animate-bounce text-sm font-medium md:block">Scroll ↓</p>
     </div>
 </section>
 
@@ -21,23 +30,55 @@ title: Scrolling Animation
     <div class="mx-auto max-w-295">
         <h2 class="mb-8 text-3xl font-bold tracking-tight">Demos</h2>
         <div class="grid gap-6 md:grid-cols-3">
-            <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="/video-intro/">
-                <h3 class="mb-2 text-xl font-semibold">Video intro</h3>
-                <p class="mb-6 flex-1 text-gray-600">A sticky video whose dark cover fades as the section scrolls in, then titles step in one at a time.</p>
-                <p class="mb-4 font-mono text-xs text-gray-500">_parallaxScroller · _hlsVideo</p>
-                <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+            <a class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 transition-colors hover:border-gray-950" href="/video-intro/">
+                {# preview: the cover fades as the card scrolls in #}
+                <div class="js-preview-video relative aspect-4/3 overflow-hidden bg-black">
+                    <video class="js-hls-video absolute inset-0 size-full object-cover" data-src="/assets/video/video1/video1.m3u8" muted playsinline loop autoplay disablepictureinpicture disableremoteplayback aria-hidden="true"></video>
+                    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/70 to-transparent"></div>
+                    <div class="js-preview-video-cover absolute inset-0 bg-black"></div>
+                    <p class="absolute inset-x-6 bottom-6 text-xl leading-tight font-bold text-white">Scroll to drive the animation</p>
+                </div>
+                <div class="flex flex-1 flex-col p-6">
+                    <h3 class="mb-2 text-xl font-semibold">Video intro</h3>
+                    <p class="mb-6 flex-1 text-gray-600">A sticky video whose dark cover fades as the section scrolls in, then titles step in one at a time.</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_parallaxScroller · _hlsVideo</p>
+                    <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+                </div>
             </a>
-            <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="/canvas/">
-                <h3 class="mb-2 text-xl font-semibold">Canvas image sequence</h3>
-                <p class="mb-6 flex-1 text-gray-600">50 frames drawn on a canvas, the frame follows the scroll position like a video scrubber.</p>
-                <p class="mb-4 font-mono text-xs text-gray-500">_canvasBanner</p>
-                <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+            <a class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 transition-colors hover:border-gray-950" href="/canvas/">
+                {# preview: a few frames of the sequence #}
+                <div class="flex aspect-4/3 items-center gap-4 bg-white px-8">
+                    <figure class="flex-1">
+                        <img class="w-full" src="/assets/img/headphone/small_{{ 0 | pad(4) }}.webp" alt="" loading="lazy" />
+                        <figcaption class="mt-2 text-center font-mono text-xs text-gray-400">01</figcaption>
+                    </figure>
+                    <figure class="flex-1">
+                        <img class="w-full" src="/assets/img/headphone/small_{{ 24 | pad(4) }}.webp" alt="" loading="lazy" />
+                        <figcaption class="mt-2 text-center font-mono text-xs text-gray-400">25</figcaption>
+                    </figure>
+                    <figure class="flex-1">
+                        <img class="w-full" src="/assets/img/headphone/small_{{ 49 | pad(4) }}.webp" alt="" loading="lazy" />
+                        <figcaption class="mt-2 text-center font-mono text-xs text-gray-400">50</figcaption>
+                    </figure>
+                </div>
+                <div class="flex flex-1 flex-col p-6">
+                    <h3 class="mb-2 text-xl font-semibold">Canvas image sequence</h3>
+                    <p class="mb-6 flex-1 text-gray-600">50 frames drawn on a canvas, the frame follows the scroll position like a video scrubber.</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_canvasBanner</p>
+                    <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+                </div>
             </a>
-            <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="/background/">
-                <h3 class="mb-2 text-xl font-semibold">Parallax background</h3>
-                <p class="mb-6 flex-1 text-gray-600">Backgrounds move slower than the page, with or without easing, plus a floating image.</p>
-                <p class="mb-4 font-mono text-xs text-gray-500">_parallaxBackground · _parallaxFloating</p>
-                <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+            <a class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 transition-colors hover:border-gray-950" href="/background/">
+                {# preview: the background moves as the card scrolls past #}
+                <div class="relative aspect-4/3 overflow-hidden bg-black">
+                    <div class="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat" data-parallax-background="80" style="background-image: url('/assets/img/banner1.jpg')"></div>
+                </div>
+                <div class="flex flex-1 flex-col p-6">
+                    <h3 class="mb-2 text-xl font-semibold">Parallax background</h3>
+                    <p class="mb-6 flex-1 text-gray-600">Backgrounds move slower than the page, with or without easing, plus a floating image.</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_parallaxBackground · _parallaxFloating</p>
+                    <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+                </div>
             </a>
         </div>
     </div>
@@ -183,3 +224,71 @@ _event.dispatch(el, 'visible', { index: 1 }); // listeners read e.detail
         </div>
     </div>
 </div>
+
+{% footerscript %}
+<!-- this script is just for this page -->
+<script type="module">
+    // Requirements
+        // JS
+            // gsap
+            // src/assets/js/utils/_event.js
+            // src/assets/js/utils/_parallax.js
+            // src/assets/js/utils/_canvasBanner.js
+
+    // hero, the headphone turns while the section is pinned
+    const canvas = new _canvasBanner({
+        target: document.querySelector('.js-hero-canvas'),
+        assets: {
+            count: 50,
+            path: '/assets/img/headphone/large_',
+            digits: 4,
+            size: [1004, 1214],
+            resizeMode: 'contain',
+            // below 768px wide
+            mobile: {
+                path: '/assets/img/headphone/small_',
+                type: 'webp',
+                size: [502, 607],
+                step: 2,
+            },
+        },
+    });
+
+    new _parallaxScroller({
+        target: document.querySelector('.js-hero'),
+        events: {
+            init(scroller) {
+                scroller.el.hint = scroller.target.querySelector('.js-hero-hint');
+            },
+            resize(scroller) {
+                const _offset = _parallax.getOffset(scroller.target);
+
+                scroller.offset.top = _offset.top;
+                scroller.offset.bottom = _offset.bottom - _parallax.height();
+            },
+            update(scroller) {
+                canvas.update(scroller.offset.current);
+
+                // hide the hint once scrolling starts
+                gsap.set(scroller.el.hint, { opacity: 1 - _parallax.clamp(scroller.portion('0%', '10%')) });
+            },
+        },
+    });
+
+    // video intro preview, the cover fades as the card scrolls in
+    new _parallaxScroller({
+        target: document.querySelector('.js-preview-video'),
+        events: {
+            init(scroller) {
+                scroller.el.cover = scroller.target.querySelector('.js-preview-video-cover');
+            },
+            update(scroller) {
+                gsap.set(scroller.el.cover, { opacity: 1 - _parallax.clamp(scroller.portion('0%', '40%')) });
+            },
+        },
+    });
+
+    // parallax background preview
+    document.querySelectorAll('[data-parallax-background]').forEach((target) => new _parallaxBackground({ target }));
+</script>
+{% endfooterscript %}
