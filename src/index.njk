@@ -6,14 +6,14 @@ title: Scrolling Animation
 {% from "components/code-block.njk" import codeBlock %}
 
 {# covers the sticky video until the intro #}
-<div class="js-links-animate relative z-2 min-h-screen bg-white">
+<div class="relative z-2 min-h-screen bg-white">
     <section class="px-4 pt-24 pb-16 md:pt-32">
         <div class="mx-auto max-w-5xl">
             <p class="mb-4 font-mono text-sm text-gray-500">11ty · Nunjucks · Tailwind · gsap</p>
             <h1 class="mb-6 text-5xl font-bold tracking-tight md:text-7xl">Scrolling Animation</h1>
             <p class="mb-10 max-w-2xl text-lg text-gray-600 md:text-xl">Scroll-driven animations for 11ty pages. Each demo is a section of markup with a short script under it, so you can copy one into your own page.</p>
             <div class="flex flex-wrap gap-3">
-                <a class="rounded-full bg-gray-950 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-700" href="#intro">See the intro demo</a>
+                <a class="js-auto-scroll rounded-full bg-gray-950 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-700" href="#intro">See the intro demo</a>
                 <a class="rounded-full border border-gray-300 px-5 py-3 text-sm font-medium text-gray-950 transition-colors hover:border-gray-950" href="https://github.com/rdmarkanthony/scrolling-animation" target="_blank" rel="noopener">View on GitHub</a>
             </div>
         </div>
@@ -23,7 +23,7 @@ title: Scrolling Animation
         <div class="mx-auto max-w-5xl">
             <h2 class="mb-8 text-3xl font-bold tracking-tight">Demos</h2>
             <div class="grid gap-6 md:grid-cols-3">
-                <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="#intro">
+                <a class="js-auto-scroll group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="#intro">
                     <h3 class="mb-2 text-xl font-semibold">Title intro</h3>
                     <p class="mb-6 flex-1 text-gray-600">A sticky video whose dark cover fades as the section scrolls in, then titles step in one at a time.</p>
                     <p class="mb-4 font-mono text-xs text-gray-500">_parallaxScroller</p>
@@ -66,7 +66,6 @@ Object.assign(window, {
     _parallaxFloating,
     _canvasBanner,
     _autoScroll,
-    _linkAnimate,
     _hlsVideo,
 });
                     {% endraw %}{% endset %}
@@ -145,7 +144,7 @@ Object.assign(window, {
     </div>
 </div>
 
-<div class="js-links-animate px-4 py-24">
+<div class="px-4 py-24">
     <div class="mx-auto max-w-5xl">
         <h2 class="mb-4 text-3xl font-bold tracking-tight">Utilities</h2>
         <p class="mb-12 max-w-2xl text-gray-600">The scroll and parallax utils, all in <code class="font-mono text-sm">src/assets/js/utils/</code> and used in page scripts.</p>

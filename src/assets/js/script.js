@@ -4,7 +4,6 @@ import { _event } from "./utils/_event";
 import { _parallax, _parallaxScroller, _parallaxBackground, _parallaxFloating } from "./utils/_parallax";
 import { _canvasBanner } from "./utils/_canvas-banner";
 import { _autoScroll } from "./utils/_auto-scroll";
-import { _linkAnimate } from "./utils/_link-animate";
 import { _hlsVideo } from "./utils/_hls-video";
 
 // expose for inline scripts
@@ -17,30 +16,23 @@ Object.assign(window, {
     _parallaxFloating,
     _canvasBanner,
     _autoScroll,
-    _linkAnimate,
     _hlsVideo,
-});
-
-// for links animate
-document.querySelectorAll(".js-links-animate a, .js-link-animate").forEach((target) => {
-    new _linkAnimate({ target });
-});
-
-// for hls videos
-document.querySelectorAll(".js-hls-video").forEach((target) => {
-    new _hlsVideo({ target });
 });
 
 // for auto scroll
 document.querySelectorAll(".js-auto-scroll").forEach((item) => {
     item.addEventListener("click", (e) => {
-        const _href = item.getAttribute("href") ?? "";
-        const _target = _href.startsWith("#") && document.getElementById(_href.slice(1));
+        const _target = document.getElementById((item.getAttribute("href") ?? "").split("#")[1]);
         if (!_target) return;
 
         e.preventDefault();
         _autoScroll({ target: _target });
     });
+});
+
+// for hls videos
+document.querySelectorAll(".js-hls-video").forEach((target) => {
+    new _hlsVideo({ target });
 });
 
 // for hash on load
