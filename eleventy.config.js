@@ -7,6 +7,12 @@ export default function (eleventyConfig) {
         lstripBlocks: true,
     });
 
+    // page slots for base.njk, e.g. {% footerscript %}<script type="module">...</script>{% endfooterscript %}
+    eleventyConfig.addBundle("styles");
+    eleventyConfig.addBundle("headerscript");
+    eleventyConfig.addBundle("popup");
+    eleventyConfig.addBundle("footerscript");
+
     // watch css change
     eleventyConfig.addWatchTarget("src/assets/css/");
 

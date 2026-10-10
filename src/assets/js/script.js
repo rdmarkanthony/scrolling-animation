@@ -1,11 +1,28 @@
+import { gsap } from "gsap";
+
 import { _event } from "./utils/_event";
+import { _scroll } from "./utils/_scroll";
+import { _scroller } from "./utils/_scroller";
+import { _parallaxBackground } from "./utils/_parallax-background";
+import { _parallaxFloating } from "./utils/_parallax-floating";
+import { _canvasBanner } from "./utils/_canvas-banner";
 import { _aspectRatio } from "./utils/_aspect-ratio";
 import { _autoScroll } from "./utils/_auto-scroll";
 import { _linkAnimate } from "./utils/_link-animate";
 
-import { _home } from "./pages/_home";
-import { _canvas } from "./pages/_canvas";
-import { _background } from "./pages/_background";
+// expose for inline scripts, see each page's {% footerscript %}
+Object.assign(window, {
+    gsap,
+    _event,
+    _scroll,
+    _scroller,
+    _parallaxBackground,
+    _parallaxFloating,
+    _canvasBanner,
+    _aspectRatio,
+    _autoScroll,
+    _linkAnimate,
+});
 
 class _scrollingAnimation {
     constructor(props) {
@@ -52,11 +69,6 @@ class _scrollingAnimation {
         // scroll to the hash on load
         const _hashTarget = window.location.hash && document.getElementById(window.location.hash.slice(1).split("?")[0]);
         if (_hashTarget) setTimeout(() => _autoScroll(_hashTarget, { offset: this.el.header?.offsetHeight }), 500);
-
-        // page specific animations, each only runs if its elements exist
-        _home.init();
-        _canvas.init();
-        _background.init();
 
         if (this.debug) console.log("_scrollingAnimation", this);
     }

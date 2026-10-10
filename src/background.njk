@@ -51,3 +51,28 @@ title: Background | Scrolling Animation
         </div>
     </div>
 </div>
+
+{% footerscript %}
+<!-- this script is just for this page -->
+<script type="module">
+    // Requirements
+        // JS
+            // gsap
+            // src/assets/js/utils/_event.js
+            // src/assets/js/utils/_scroll.js
+            // src/assets/js/utils/_parallax-background.js
+            // src/assets/js/utils/_parallax-floating.js
+        // CSS
+            // src/assets/css/components/scrolling.css (.com_banner)
+
+    // for parallax background, data-parallax-background="range,easing"
+    document.querySelectorAll('[data-parallax-background]').forEach((target) => {
+        new _parallaxBackground({ target });
+    });
+
+    // for floating content, data-parallax-floating="range"
+    document.querySelectorAll('[data-parallax-floating]').forEach((target) => {
+        new _parallaxFloating({ target });
+    });
+</script>
+{% endfooterscript %}
