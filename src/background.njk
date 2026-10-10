@@ -3,6 +3,9 @@ layout: base.njk
 title: Background | Scrolling Animation
 ---
 
+{% from "components/back-link.njk" import backLink %}
+{{ backLink() }}
+
 <div class="relative min-h-screen outline outline-dashed outline-green-700">
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat" data-parallax-background style="background-image: url('/assets/img/banner1.jpg')"></div>

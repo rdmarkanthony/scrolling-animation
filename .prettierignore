@@ -2,3 +2,5 @@ public
 node_modules
 package-lock.json
 pnpm-lock.yaml
+# hls video segments (.ts) are not typescript
+src/assets/video

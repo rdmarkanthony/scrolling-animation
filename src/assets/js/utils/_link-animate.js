@@ -58,6 +58,9 @@ export class _linkAnimate {
         Object.assign(_cover.style, { zIndex: 9999, position: "fixed", inset: 0, backgroundColor: "#fff" });
         document.body.appendChild(_cover);
 
+        // remove the cover when coming back to this page from the browser cache
+        window.addEventListener("pageshow", () => _cover.remove(), { once: true });
+
         gsap.fromTo(_cover, { opacity: 0 }, { duration: 0.3, opacity: 1, onComplete: () => window.open(_href, "_self") });
     }
 }

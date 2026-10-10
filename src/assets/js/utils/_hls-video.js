@@ -6,11 +6,24 @@ export class _hlsVideo {
         this.src = props.src ?? this.target?.dataset.src ?? "";
 
         this.hls = null;
+        this.observer = null;
+        this.visible = false;
 
         if (this.target && this.src) this.init();
     }
 
     init() {
+        // autoplay only while on screen, browsers can leave a muted autoplay video paused when it starts offscreen
+        if (this.target.autoplay) {
+            this.observer = new IntersectionObserver(([entry]) => {
+                this.visible = entry.isIntersecting;
+                this.toggle();
+            });
+            this.observer.observe(this.target);
+            this.onVisibility = () => this.toggle();
+            document.addEventListener("visibilitychange", this.onVisibility);
+        }
+
         // looping back lands before the first frame when the encode starts late, hop over the gap
         this.target.addEventListener("waiting", () => {
             const _buffered = this.target.buffered;
@@ -36,7 +49,19 @@ export class _hlsVideo {
         });
     }
 
+    toggle() {
+        if (this.visible && document.visibilityState === "visible") {
+            this.target.play().catch(() => {});
+        } else {
+            this.target.pause();
+        }
+    }
+
     destroy() {
+        this.observer?.disconnect();
+        this.observer = null;
+        document.removeEventListener("visibilitychange", this.onVisibility);
+
         this.hls?.destroy();
         this.hls = null;
 

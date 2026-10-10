@@ -3,20 +3,132 @@ layout: base.njk
 title: Scrolling Animation
 ---
 
-<div class="relative z-2 min-h-screen bg-white outline outline-dashed outline-green-700">
-    <div class="relative z-3">
-        <div class="px-3.75 py-25">
-            <div class="mx-auto max-w-5xl">
-                <ul class="js-links-animate text-xl">
-                    <li><a class="text-blue-500" href="#intro">fixed video background</a></li>
-                    <li><a class="text-blue-500" href="/canvas/" target="_blank">canvas</a></li>
-                    <li><a class="text-blue-500" href="/background/" target="_blank">background</a></li>
-                </ul>
+{% from "components/code-block.njk" import codeBlock %}
+
+{# white section above the intro, it covers the sticky video until the intro scrolls in #}
+<div class="js-links-animate relative z-2 min-h-screen bg-white">
+    <section class="px-4 pt-24 pb-16 md:pt-32">
+        <div class="mx-auto max-w-5xl">
+            <p class="mb-4 font-mono text-sm text-gray-500">11ty · Nunjucks · Tailwind · gsap</p>
+            <h1 class="mb-6 text-5xl font-bold tracking-tight md:text-7xl">Scrolling Animation</h1>
+            <p class="mb-10 max-w-2xl text-lg text-gray-600 md:text-xl">Scroll-driven animations for 11ty pages. Each demo is a section of markup with a short script under it, so you can copy one into your own page.</p>
+            <div class="flex flex-wrap gap-3">
+                <a class="rounded-full bg-gray-950 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-700" href="#intro">See the intro demo</a>
+                <a class="rounded-full border border-gray-300 px-5 py-3 text-sm font-medium text-gray-950 transition-colors hover:border-gray-950" href="https://github.com/rdmarkanthony/scrolling-animation" target="_blank" rel="noopener">View on GitHub</a>
             </div>
         </div>
-    </div>
+    </section>
+
+    <section class="px-4 py-16">
+        <div class="mx-auto max-w-5xl">
+            <h2 class="mb-8 text-3xl font-bold tracking-tight">Demos</h2>
+            <div class="grid gap-6 md:grid-cols-3">
+                <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="#intro">
+                    <h3 class="mb-2 text-xl font-semibold">Title intro</h3>
+                    <p class="mb-6 flex-1 text-gray-600">A sticky video whose dark cover fades as the section scrolls in, then titles step in one at a time.</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_scroller · _hlsVideo</p>
+                    <span class="text-sm font-medium">On this page ↓</span>
+                </a>
+                <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="/canvas/">
+                    <h3 class="mb-2 text-xl font-semibold">Canvas image sequence</h3>
+                    <p class="mb-6 flex-1 text-gray-600">50 frames drawn on a canvas, the frame follows the scroll position like a video scrubber.</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_canvasBanner</p>
+                    <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+                </a>
+                <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="/background/">
+                    <h3 class="mb-2 text-xl font-semibold">Parallax background</h3>
+                    <p class="mb-6 flex-1 text-gray-600">Backgrounds move slower than the page, with or without easing, plus a floating image.</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_parallaxBackground · _parallaxFloating</p>
+                    <span class="text-sm font-medium">Open demo <span class="inline-block transition-transform group-hover:translate-x-1">→</span></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-4 py-16">
+        <div class="mx-auto max-w-5xl">
+            <h2 class="mb-8 text-3xl font-bold tracking-tight">How it works</h2>
+            <ol class="grid gap-10">
+                <li class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
+                    <div>
+                        <p class="mb-2 font-mono text-sm text-gray-500">01</p>
+                        <h3 class="mb-2 text-xl font-semibold">script.js loads the utils</h3>
+                        <p class="text-gray-600">It sets up the shared hooks (links, aspect ratio, HLS videos) and puts every util on <code class="font-mono text-sm">window</code> for page scripts.</p>
+                    </div>
+                    {% set code %}{% raw %}
+// src/assets/js/script.js
+Object.assign(window, {
+    gsap,
+    _event,
+    _scroll,
+    _scroller,
+    _parallaxBackground,
+    _parallaxFloating,
+    _canvasBanner,
+    _aspectRatio,
+    _autoScroll,
+    _linkAnimate,
+    _hlsVideo,
+});
+                    {% endraw %}{% endset %}
+                    {{ codeBlock(code, 'js') }}
+                </li>
+                <li class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
+                    <div>
+                        <p class="mb-2 font-mono text-sm text-gray-500">02</p>
+                        <h3 class="mb-2 text-xl font-semibold">Mark up the section</h3>
+                        <p class="text-gray-600">Style with Tailwind classes. Add <code class="font-mono text-sm">js-</code> classes for elements the script looks up, and <code class="font-mono text-sm">data-</code> attributes for options.</p>
+                    </div>
+                    {% set code %}{% raw %}
+<div class="js-fade-section relative min-h-screen bg-black text-white">
+    <h2 class="sticky top-0 py-40 text-center text-5xl">Fades in on scroll</h2>
 </div>
-<div class="js-title-intro relative z-1 min-h-[150vh] bg-black text-white outline outline-dashed outline-red-400">
+                    {% endraw %}{% endset %}
+                    {{ codeBlock(code, 'html') }}
+                </li>
+                <li class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
+                    <div>
+                        <p class="mb-2 font-mono text-sm text-gray-500">03</p>
+                        <h3 class="mb-2 text-xl font-semibold">Add the page script</h3>
+                        <p class="text-gray-600">Put it in <code class="font-mono text-sm">{% raw %}{% footerscript %}{% endraw %}</code> so it renders below <code class="font-mono text-sm">script.js</code>. Use <code class="font-mono text-sm">type="module"</code> so it runs after it.</p>
+                    </div>
+                    {% set code %}{% raw %}
+{% footerscript %}
+<script type="module">
+    new _scroller({
+        target: document.querySelector('.js-fade-section'),
+        init(scroller) {
+            // offset.current goes from 0 at offset.top to 1 at offset.bottom
+            _event.resize(() => {
+                scroller.offset.top = _scroll.offset(scroller.target) - _event.height();
+                scroller.offset.bottom = _scroll.offset(scroller.target);
+            });
+        },
+        update(scroller) {
+            gsap.set(scroller.target, { opacity: _scroll.clamp(scroller.offset.current) });
+        },
+    });
+</script>
+{% endfooterscript %}
+                    {% endraw %}{% endset %}
+                    {{ codeBlock(code, 'njk') }}
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="px-4 pt-16 pb-32">
+        <div class="mx-auto max-w-5xl">
+            <p class="mb-2 font-mono text-sm text-gray-500">Demo</p>
+            <h2 class="mb-4 text-3xl font-bold tracking-tight">Title intro</h2>
+            <p class="mb-10 max-w-2xl text-gray-600">The next section is the live demo. Its markup and page script are in <code class="font-mono text-sm">src/index.njk</code>.</p>
+            <p class="animate-bounce text-sm font-medium">Scroll down ↓</p>
+        </div>
+    </section>
+</div>
+
+{# demo: title intro #}
+<div class="js-title-intro relative z-1 min-h-[150vh] bg-black text-white">
     <div class="sticky top-0 -mt-[100vh] h-screen w-full overflow-hidden">
         <div class="absolute inset-0 after:absolute after:inset-0 after:z-2 after:bg-black/20">
             <video class="js-hls-video absolute inset-0 size-full object-cover" data-src="/assets/video/video1/video1.m3u8" muted playsinline loop autoplay disablepictureinpicture disableremoteplayback aria-hidden="true"></video>
@@ -24,20 +136,140 @@ title: Scrolling Animation
         <div class="js-title-intro-cover absolute inset-0 z-1 bg-black"></div>
     </div>
     <div id="intro" class="js-title-intro-content relative z-2 pt-[50vh] pb-[35vh]">
-        <div class="px-3.75">
+        <div class="px-4">
             <div class="mx-auto max-w-5xl text-center">
                 <ul class="js-title-intro-list">
-                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">Lorem ipsum dolor sit amet</h1></li>
-                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">consectetur adipiscing elit, sed do eiusmod tempor</h1></li>
-                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">Ut enim ad minim veniam</h1></li>
-                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">quis nostrud exercitation ullamco laboris nisi ut</h1></li>
-                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h1 class="mb-2 text-[80px] leading-[1.2] font-bold">Duis aute irure dolor in reprehenderit in voluptate velit esse</h1></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h2 class="mb-2 text-5xl leading-[1.2] font-bold md:text-[80px]">Scroll to drive the animation</h2></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h2 class="mb-2 text-5xl leading-[1.2] font-bold md:text-[80px]">The cover fades as the section enters</h2></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h2 class="mb-2 text-5xl leading-[1.2] font-bold md:text-[80px]">Each title steps in at mid screen</h2></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h2 class="mb-2 text-5xl leading-[1.2] font-bold md:text-[80px]">States are data attributes</h2></li>
+                    <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h2 class="mb-2 text-5xl leading-[1.2] font-bold md:text-[80px]">Copy the section and its script</h2></li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
-<div class="relative min-h-screen outline outline-dashed outline-green-700"></div>
+
+<div class="js-links-animate px-4 py-24">
+    <div class="mx-auto max-w-5xl">
+        <h2 class="mb-4 text-3xl font-bold tracking-tight">Utilities</h2>
+        <p class="mb-12 max-w-2xl text-gray-600">All in <code class="font-mono text-sm">src/assets/js/utils/</code>. The first group works from markup alone, <code class="font-mono text-sm">script.js</code> sets them up on every page. The second group is used in page scripts.</p>
+
+        <h3 class="mb-6 text-sm font-semibold tracking-wide text-gray-500 uppercase">Markup only</h3>
+        <div class="mb-16 grid gap-6">
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_hlsVideo</h4>
+                <p class="mb-4 text-gray-600">Plays an HLS video with hls.js, or natively where hls.js isn't needed. The README has the ffmpeg command to convert a video.</p>
+                {% set code %}{% raw %}
+<video class="js-hls-video" data-src="/assets/video/name/name.m3u8" muted loop autoplay playsinline></video>
+                {% endraw %}{% endset %}
+                {{ codeBlock(code) }}
+            </div>
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_aspectRatio</h4>
+                <p class="mb-4 text-gray-600">Sizes the element to its parent's width at a fixed ratio. Add <code class="font-mono text-sm">minheight</code> to set min-height, <code class="font-mono text-sm">vertical</code> to follow the parent's height.</p>
+                {% set code %}{% raw %}
+<div data-aspect-ratio="1006,1584"></div>
+<div data-aspect-ratio="16,9,minheight"></div>
+                {% endraw %}{% endset %}
+                {{ codeBlock(code) }}
+            </div>
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_linkAnimate</h4>
+                <p class="mb-4 text-gray-600">Links to an anchor scroll smoothly, other links fade the page out before leaving. New tabs, mailto and tel work as normal.</p>
+                {% set code %}{% raw %}
+<ul class="js-links-animate">...</ul>
+<a class="js-link-animate" href="/about/">About</a>
+<a class="js-link-animate" href="/about/" data-link-animate="false">Disabled</a>
+                {% endraw %}{% endset %}
+                {{ codeBlock(code) }}
+            </div>
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_autoScroll</h4>
+                <p class="mb-4 text-gray-600">Smooth scrolls to an anchor, leaving room for the header. <code class="font-mono text-sm">data-scroll-diff</code> on the target scrolls to its closest matching parent instead.</p>
+                {% set code %}{% raw %}
+<a class="js-auto-scroll" href="#contact">Contact</a>
+
+// or from a script
+_autoScroll(document.getElementById('contact'), { offset: 80, speed: 700 });
+                {% endraw %}{% endset %}
+                {{ codeBlock(code) }}
+            </div>
+        </div>
+
+        <h3 class="mb-6 text-sm font-semibold tracking-wide text-gray-500 uppercase">In page scripts</h3>
+        <div class="grid gap-6">
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_scroller</h4>
+                <p class="mb-4 text-gray-600">Runs <code class="font-mono text-sm">update()</code> on every scroll and resize. Set <code class="font-mono text-sm">offset.top</code> and <code class="font-mono text-sm">offset.bottom</code> in <code class="font-mono text-sm">init()</code>, then read <code class="font-mono text-sm">offset.current</code>: 0 at the top, 1 at the bottom, unclamped. <code class="font-mono text-sm">portion(min, max)</code> gives the progress within part of the range, as percents of <code class="font-mono text-sm">offset.current</code> or as scroll positions.</p>
+                {% set code %}{% raw %}
+new _scroller({
+    target: document.querySelector('.js-my-section'),
+    init(scroller) {
+        _event.resize(() => {
+            scroller.offset.top = _scroll.offset(scroller.target) - _event.height();
+            scroller.offset.bottom = _scroll.offset(scroller.target) + scroller.target.offsetHeight;
+        });
+    },
+    update(scroller) {
+        const _progress = _scroll.clamp(scroller.portion('20%', '60%'));
+        gsap.set(scroller.target, { scale: 0.8 + _progress * 0.2 });
+    },
+});
+                {% endraw %}{% endset %}
+                {{ codeBlock(code, 'js') }}
+            </div>
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_canvasBanner</h4>
+                <p class="mb-4 text-gray-600">Preloads an image sequence named <code class="font-mono text-sm">path + 0000.jpg</code> and draws the frame for the scroll position you pass to <code class="font-mono text-sm">update(top, bottom)</code>.</p>
+                {% set code %}{% raw %}
+new _canvasBanner({
+    target: document.querySelector('.js-my-canvas'),
+    assets: { count: 50, path: '/assets/img/frames/frame_', size: [1004, 1214] },
+    init(canvas) {
+        const _section = canvas.target.closest('.js-my-section');
+        _event.scroll(() => {
+            const _top = _scroll.offset(_section);
+            canvas.update(_top, _top + _section.offsetHeight * 0.4);
+        });
+    },
+});
+                {% endraw %}{% endset %}
+                {{ codeBlock(code, 'js') }}
+            </div>
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_parallaxBackground · _parallaxFloating</h4>
+                <p class="mb-4 text-gray-600">The background moves within an <code class="font-mono text-sm">overflow-hidden</code> parent, <code class="font-mono text-sm">range</code> in pixels, <code class="font-mono text-sm">easing</code> to smooth it. The floating element drifts down by its range.</p>
+                {% set code %}{% raw %}
+<div class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-cover" data-parallax-background="100,easing" style="background-image: url('/assets/img/banner1.jpg')"></div>
+</div>
+<img data-parallax-floating="50" src="/assets/img/banner1.jpg" alt="" />
+
+document.querySelectorAll('[data-parallax-background]').forEach((target) => new _parallaxBackground({ target }));
+document.querySelectorAll('[data-parallax-floating]').forEach((target) => new _parallaxFloating({ target }));
+                {% endraw %}{% endset %}
+                {{ codeBlock(code) }}
+            </div>
+            <div class="rounded-2xl border border-gray-200 p-6">
+                <h4 class="mb-1 font-mono font-semibold">_scroll · _event</h4>
+                <p class="mb-4 text-gray-600">Helpers the other utils are built on.</p>
+                {% set code %}{% raw %}
+_scroll.top();              // current scroll position
+_scroll.offset(el);         // element top relative to the document
+_scroll.progress(min, max); // 0 at min, 1 at max, unclamped
+_scroll.clamp(value);       // limit to 0 - 1
+
+_event.resize((state) => {}); // state: init, ready, resize, after
+_event.scroll((e) => {});     // runs once now, then on every scroll
+_event.width();               // viewport size without the scrollbar
+_event.height();
+                {% endraw %}{% endset %}
+                {{ codeBlock(code, 'js') }}
+            </div>
+        </div>
+    </div>
+</div>
 
 {% footerscript %}
 <!-- this script is just for this page -->
@@ -80,9 +312,9 @@ title: Scrolling Animation
 
             let _currentList = 0;
 
-            // determine which title is in the middle of the display
+            // determine which title is in the middle of the display, its top above half the screen (plus a quarter of its height)
             scroller.el.list.forEach((item, index) => {
-                const _offset = _scroll.top() - (_scroll.offset(item) - _scTop) - _height * 0.5 + item.offsetHeight * 0.25;
+                const _offset = _height * 0.5 + item.offsetHeight * 0.25 - (_scroll.offset(item) - _scroll.top());
 
                 if (_offset >= 0) _currentList = index;
             });
