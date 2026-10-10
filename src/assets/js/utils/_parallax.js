@@ -11,6 +11,13 @@ export const _parallax = {
     scrollTop() {
         return window.scrollY;
     },
+    // viewport size without the scrollbar, what the layout fits into
+    width() {
+        return document.documentElement.clientWidth;
+    },
+    height(isDocument = false) {
+        return isDocument ? document.documentElement.scrollHeight : document.documentElement.clientHeight;
+    },
     // position in the document, transforms are ignored
     getOffset(target) {
         let top = 0;
@@ -72,7 +79,7 @@ export class _parallaxScroller {
     resize() {
         const _offset = _parallax.getOffset(this.target);
 
-        this.offset.top = _offset.top - _event.height();
+        this.offset.top = _offset.top - _parallax.height();
         this.offset.bottom = _offset.bottom;
 
         this.emit("resize");

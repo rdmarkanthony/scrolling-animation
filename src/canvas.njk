@@ -85,7 +85,7 @@ new _parallaxScroller({
             const _offset = _parallax.getOffset(scroller.target);
 
             scroller.offset.top = _offset.top;
-            scroller.offset.bottom = _offset.bottom - _event.height();
+            scroller.offset.bottom = _offset.bottom - _parallax.height();
         },
         update(scroller) {
             canvas.update(scroller.offset.current);
@@ -170,7 +170,7 @@ new _parallaxScroller({
                 const _offset = _parallax.getOffset(scroller.target);
 
                 scroller.offset.top = _offset.top;
-                scroller.offset.bottom = _offset.bottom - _event.height();
+                scroller.offset.bottom = _offset.bottom - _parallax.height();
             },
             update(scroller) {
                 _canvas.update(scroller.offset.current);

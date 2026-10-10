@@ -83,7 +83,7 @@ const scroller = new _parallaxScroller({
         resize(scroller) {
             const _offset = _parallax.getOffset(scroller.target);
             scroller.offset.top = _offset.top;
-            scroller.offset.bottom = _offset.bottom - _event.height();
+            scroller.offset.bottom = _offset.bottom - _parallax.height();
         },
         // on scroll
         update(scroller) {
@@ -186,7 +186,7 @@ new _parallaxScroller({
         resize(scroller) {
             const _offset = _parallax.getOffset(scroller.target);
             scroller.offset.top = _offset.top;
-            scroller.offset.bottom = _offset.bottom - _event.height();
+            scroller.offset.bottom = _offset.bottom - _parallax.height();
         },
         update(scroller) {
             canvas.update(scroller.offset.current);
@@ -267,6 +267,8 @@ Helpers the scroll utils are built on.
 
 ```js
 _parallax.scrollTop(); // current scroll position
+_parallax.width(); // viewport size without the scrollbar
+_parallax.height(); // pass true for the document height
 _parallax.getOffset(el); // { top, left, bottom, right } in the document, transforms ignored
 _parallax.getRange(min, max); // 0 at min, 1 at max, unclamped
 _parallax.clamp(value); // limit to 0 - 1
@@ -286,7 +288,5 @@ _event.observeResize((entry) => {}, el); // el changes size, e.g. images load ab
 const off = _event.scroll(callback);
 off();
 
-_event.width(); // viewport size without the scrollbar
-_event.height(); // pass true for the document height
 _event.dispatch(el, "visible", { index: 1 }); // listeners read e.detail
 ```

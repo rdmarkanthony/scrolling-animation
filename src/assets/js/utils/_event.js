@@ -5,6 +5,7 @@ const _observeState = { observer: null, callbacks: new Map(), initial: new WeakS
 const _run = (callbacks, ...args) => callbacks.forEach((callback) => callback(...args));
 
 // phone address bar showing or hiding, only the height changes a little
+// innerWidth/innerHeight, the size the resize event reports
 const _isToolbarResize = () => {
     const _width = window.innerWidth;
     const _height = window.innerHeight;
@@ -124,12 +125,5 @@ export const _event = {
     // emit certain event
     dispatch(elem, eventName, detail) {
         elem.dispatchEvent(new CustomEvent(eventName, { detail }));
-    },
-
-    width() {
-        return document.documentElement.clientWidth;
-    },
-    height(isDocument = false) {
-        return isDocument ? document.documentElement.scrollHeight : document.documentElement.clientHeight;
     },
 };

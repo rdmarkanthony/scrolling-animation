@@ -123,7 +123,7 @@ Object.assign(window, {
 
 {# demo: title intro #}
 <div class="js-title-intro relative z-1 min-h-[150vh] bg-black text-white">
-    <div class="sticky top-0 -mt-[100vh] h-screen w-full overflow-hidden">
+    <div class="sticky top-0 mt-[-100vh] h-screen w-full overflow-hidden">
         <div class="absolute inset-0 after:absolute after:inset-0 after:z-2 after:bg-black/20">
             <video class="js-hls-video absolute inset-0 size-full object-cover" data-src="/assets/video/video1/video1.m3u8" muted playsinline loop autoplay disablepictureinpicture disableremoteplayback aria-hidden="true"></video>
         </div>
@@ -163,7 +163,7 @@ const scroller = new _parallaxScroller({
         resize(scroller) {
             const _offset = _parallax.getOffset(scroller.target);
             scroller.offset.top = _offset.top;
-            scroller.offset.bottom = _offset.bottom - _event.height();
+            scroller.offset.bottom = _offset.bottom - _parallax.height();
         },
         // on scroll
         update(scroller) {
@@ -216,6 +216,8 @@ document.querySelectorAll('[data-parallax-floating]').forEach((target) => new _p
                 <p class="mb-4 text-gray-600">Helpers the other utils are built on. <code class="font-mono text-sm">_event</code> keeps one scroll and one resize listener for the whole page, however many callbacks are added.</p>
                 {% set code %}{% raw %}
 _parallax.scrollTop();        // current scroll position
+_parallax.width();            // viewport size without the scrollbar
+_parallax.height();           // pass true for the document height
 _parallax.getOffset(el);      // { top, left, bottom, right } in the document, transforms ignored
 _parallax.getRange(min, max); // 0 at min, 1 at max, unclamped
 _parallax.clamp(value);       // limit to 0 - 1
@@ -227,8 +229,6 @@ _event.observeResize((entry) => {}, el); // el changes size, e.g. images load ab
 const off = _event.scroll(callback); // every subscribe returns a function that removes it
 off();
 
-_event.width();                // viewport size without the scrollbar
-_event.height();
 _event.dispatch(el, 'visible', { index: 1 }); // listeners read e.detail
                 {% endraw %}{% endset %}
                 {{ codeBlock(code, 'js') }}
@@ -256,7 +256,7 @@ _event.dispatch(el, 'visible', { index: 1 }); // listeners read e.detail
                 scroller.el.list = [...scroller.el.listWrap.children];
             },
             resize(scroller) {
-                const _height = _event.height();
+                const _height = _parallax.height();
                 const _top = _parallax.getOffset(scroller.target).top;
 
                 // while the content enters the screen
