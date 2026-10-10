@@ -10,7 +10,7 @@
         "start": "npm-run-all -s clean -p 'dev:*'",
         "dev": "npm-run-all -s clean -p 'dev:*'",
         "dev:eleventy": "eleventy --serve",
-        "dev:css": "tailwindcss -i ./src/assets/css/style.css -o ./public/assets/css/style.css --watch",
+        "dev:css": "tailwindcss -i ./src/assets/css/style.css -o ./public/assets/css/style.css --watch --minify",
         "dev:js": "node esbuild.config.js --watch",
         "build": "npm-run-all -s clean 'build:*'",
         "build:eleventy": "eleventy",

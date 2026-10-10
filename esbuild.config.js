@@ -16,10 +16,10 @@ const publicEnv = Object.fromEntries(
 const ctx = await esbuild.context({
     entryPoints: ["src/assets/js/script.js"],
     bundle: true,
-    minify: !isWatch,
+    minify: true,
     sourcemap: isWatch,
     outdir: "public/assets/js",
-    // dynamic imports (e.g. hls.js) become separate chunks, loaded only when used
+    // split dynamic imports (hls.js)
     splitting: true,
     chunkNames: "chunks/[name]-[hash]",
     format: "esm",
