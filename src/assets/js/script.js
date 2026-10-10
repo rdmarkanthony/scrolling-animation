@@ -2,9 +2,9 @@ import { gsap } from "gsap";
 
 import { _event } from "./utils/_event";
 import { _parallax, _parallaxScroller, _parallaxBackground, _parallaxFloating } from "./utils/_parallax";
-import { _canvasBanner } from "./utils/_canvas-banner";
-import { _autoScroll } from "./utils/_auto-scroll";
-import { _hlsVideo } from "./utils/_hls-video";
+import { _canvasBanner } from "./utils/_canvasBanner";
+import { _autoScroll } from "./utils/_autoScroll";
+import { _hlsVideo } from "./utils/_hlsVideo";
 
 // expose for inline scripts
 Object.assign(window, {
