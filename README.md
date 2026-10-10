@@ -52,7 +52,7 @@ Each page's animation script is in its `{% footerscript %}`, right below the mai
 
 ### Videos
 
-Videos are served as HLS (`.m3u8` playlist + `.ts` segments) from `src/assets/video/<name>/`. `hls.js` plays them where the browser supports Media Source Extensions, other browsers (e.g. iOS Safari) play the playlist natively. `hls.js` is split into its own chunk, so it only downloads on pages with a video.
+Videos are served as HLS (`.m3u8` playlist + `.ts` segments) from `src/assets/video/<name>/`. `hls.js` plays them where the browser supports Media Source Extensions, other browsers (e.g. iOS Safari) play the playlist natively. `hls.js` is split into its own chunk, so it only downloads on pages with a video. The video loads when it gets within a screen of the viewport, and an `autoplay` video plays only while it's on screen (not with reduced motion).
 
 Convert an `.mp4` (H.264) without re-encoding, audio removed for muted background videos:
 
