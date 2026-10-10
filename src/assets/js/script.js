@@ -9,6 +9,7 @@ import { _canvasBanner } from "./utils/_canvas-banner";
 import { _aspectRatio } from "./utils/_aspect-ratio";
 import { _autoScroll } from "./utils/_auto-scroll";
 import { _linkAnimate } from "./utils/_link-animate";
+import { _hlsVideo } from "./utils/_hls-video";
 
 // expose for inline scripts, see each page's {% footerscript %}
 Object.assign(window, {
@@ -22,6 +23,7 @@ Object.assign(window, {
     _aspectRatio,
     _autoScroll,
     _linkAnimate,
+    _hlsVideo,
 });
 
 class _scrollingAnimation {
@@ -52,6 +54,11 @@ class _scrollingAnimation {
         // for links animate
         document.querySelectorAll(".js-links-animate a, .js-link-animate").forEach((target) => {
             new _linkAnimate({ target });
+        });
+
+        // for hls videos
+        document.querySelectorAll(".js-hls-video").forEach((target) => {
+            new _hlsVideo({ target });
         });
 
         // for auto scroll
