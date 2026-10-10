@@ -3,21 +3,21 @@ layout: base.njk
 title: Canvas | Scrolling Animation
 ---
 
-<div class="section com_image-list min-h-[50vh] py-[100px]">
-    <div class="px-[15px]">
-        <div class="mx-auto max-w-5xl pb-[50px]">
-            <h2>Here's the list of image sequence</h2>
-            <p>See below on how it animate thru scrolling</p>
+<div class="relative min-h-[50vh] py-25 outline outline-dashed outline-green-700">
+    <div class="px-3.75">
+        <div class="mx-auto max-w-5xl pb-12.5">
+            <h2 class="mb-2 text-3xl font-medium">Here's the list of image sequence</h2>
+            <p class="mb-4 text-xl">See below on how it animate thru scrolling</p>
         </div>
         <ul class="flex flex-wrap">
             {% for i in range(0, 50) %}
-            <li class="w-[10%]"><img src="/assets/img/headphone/large_{{ i | pad(4) }}.jpg" alt="" /></li>
+            <li class="w-1/10"><img src="/assets/img/headphone/large_{{ i | pad(4) }}.jpg" alt="" /></li>
             {% endfor %}
         </ul>
     </div>
 </div>
-<div class="section min-h-[150vh]">
-    <div class="com_sticky-content">
+<div class="js-canvas-section relative min-h-[150vh] outline outline-dashed outline-green-700">
+    <div class="sticky top-0 h-screen w-full">
         <div class="relative mx-auto max-w-5xl">
             <div class="absolute inset-0">
                 <canvas id="headphone" data-aspect-ratio="1004,1214"></canvas>
@@ -25,4 +25,34 @@ title: Canvas | Scrolling Animation
         </div>
     </div>
 </div>
-<div class="section min-h-screen"></div>
+<div class="relative min-h-screen outline outline-dashed outline-green-700"></div>
+
+{% footerscript %}
+<!-- this script is just for this page -->
+<script type="module">
+    // Requirements
+        // JS
+            // src/assets/js/utils/_event.js
+            // src/assets/js/utils/_scroll.js
+            // src/assets/js/utils/_canvas-banner.js
+
+    // image sequence drawn on canvas while scrolling
+    new _canvasBanner({
+        target: document.querySelector('#headphone'),
+        assets: {
+            count: 50,
+            path: '/assets/img/headphone/large_',
+            size: [1004, 1214],
+        },
+        init(canvas) {
+            const _parent = canvas.target.closest('.js-canvas-section');
+
+            _event.scroll(() => {
+                const _top = _scroll.offset(_parent);
+
+                canvas.update(_top, _top + _parent.offsetHeight * 0.4);
+            });
+        },
+    });
+</script>
+{% endfooterscript %}

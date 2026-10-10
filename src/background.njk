@@ -3,51 +3,74 @@ layout: base.njk
 title: Background | Scrolling Animation
 ---
 
-<div class="section relative min-h-screen">
-    <div class="com_banner absolute inset-0 pointer-events-none overflow-hidden">
-        <div class="com_banner absolute inset-0 pointer-events-none" data-parallax-background style="background-image: url('/assets/img/banner1.jpg')"></div>
+<div class="relative min-h-screen outline outline-dashed outline-green-700">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat" data-parallax-background style="background-image: url('/assets/img/banner1.jpg')"></div>
     </div>
 </div>
-<div class="section min-h-screen">
-    <div class="com_section-content">
-        <div class="px-[15px] py-[100px]">
+<div class="relative min-h-screen outline outline-dashed outline-green-700">
+    <div class="relative z-3">
+        <div class="px-3.75 py-25">
             <div class="text-center">
-                <div class="mx-auto max-w-[500px]">
-                    <div class="com_banner overflow-hidden bg-black" data-aspect-ratio="1006,1584">
-                        <div class="com_banner absolute inset-0 pointer-events-none" data-parallax-background style="background-image: url('/assets/img/banner1.jpg')"></div>
+                <div class="mx-auto max-w-125">
+                    <div class="relative overflow-hidden bg-black" data-aspect-ratio="1006,1584">
+                        <div class="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat" data-parallax-background style="background-image: url('/assets/img/banner1.jpg')"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="section min-h-screen">
-    <div class="com_section-content">
-        <div class="px-[15px] py-[100px]">
+<div class="relative min-h-screen outline outline-dashed outline-green-700">
+    <div class="relative z-3">
+        <div class="px-3.75 py-25">
             <div class="text-center">
-                <div class="mx-auto max-w-[500px]">
-                    <div class="com_banner overflow-hidden bg-black" data-aspect-ratio="1006,1584">
-                        <div class="com_banner absolute inset-0 pointer-events-none" data-parallax-background="100,easing" style="background-image: url('/assets/img/banner1.jpg')"></div>
+                <div class="mx-auto max-w-125">
+                    <div class="relative overflow-hidden bg-black" data-aspect-ratio="1006,1584">
+                        <div class="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat" data-parallax-background="100,easing" style="background-image: url('/assets/img/banner1.jpg')"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="section min-h-screen">
-    <div class="com_section-content">
-        <div class="px-[15px] py-[50px]">
+<div class="relative min-h-screen outline outline-dashed outline-green-700">
+    <div class="relative z-3">
+        <div class="px-3.75 py-12.5">
             <div class="mx-auto max-w-5xl">
-                <div class="grid items-center gap-[30px] md:grid-cols-2">
+                <div class="grid items-center gap-7.5 md:grid-cols-2">
                     <div>
-                        <div class="com_banner overflow-hidden" style="outline: 1px dashed green"><img data-parallax-floating src="/assets/img/banner1.jpg" alt="" /></div>
+                        <div class="relative overflow-hidden outline outline-dashed outline-green-700"><img data-parallax-floating src="/assets/img/banner1.jpg" alt="" /></div>
                     </div>
                     <div>
-                        <h1>Sample title</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <h1 class="mb-2 text-4xl font-medium">Sample title</h1>
+                        <p class="mb-4 text-xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{% footerscript %}
+<!-- this script is just for this page -->
+<script type="module">
+    // Requirements
+        // JS
+            // gsap
+            // src/assets/js/utils/_event.js
+            // src/assets/js/utils/_scroll.js
+            // src/assets/js/utils/_parallax-background.js
+            // src/assets/js/utils/_parallax-floating.js
+
+    // for parallax background, data-parallax-background="range,easing"
+    document.querySelectorAll('[data-parallax-background]').forEach((target) => {
+        new _parallaxBackground({ target });
+    });
+
+    // for floating content, data-parallax-floating="range"
+    document.querySelectorAll('[data-parallax-floating]').forEach((target) => {
+        new _parallaxFloating({ target });
+    });
+</script>
+{% endfooterscript %}
