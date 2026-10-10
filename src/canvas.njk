@@ -1,0 +1,28 @@
+---
+layout: base.njk
+title: Canvas | Scrolling Animation
+---
+
+<div class="section com_image-list min-h-[50vh] py-[100px]">
+    <div class="px-[15px]">
+        <div class="mx-auto max-w-5xl pb-[50px]">
+            <h2>Here's the list of image sequence</h2>
+            <p>See below on how it animate thru scrolling</p>
+        </div>
+        <ul class="flex flex-wrap">
+            {% for i in range(0, 50) %}
+            <li class="w-[10%]"><img src="/assets/img/headphone/large_{{ i | pad(4) }}.jpg" alt="" /></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="section min-h-[150vh]">
+    <div class="com_sticky-content">
+        <div class="relative mx-auto max-w-5xl">
+            <div class="absolute inset-0">
+                <canvas id="headphone" data-aspect-ratio="1004,1214"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section min-h-screen"></div>
