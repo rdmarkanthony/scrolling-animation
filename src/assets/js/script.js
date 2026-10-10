@@ -6,7 +6,6 @@ import { _scroller } from "./utils/_scroller";
 import { _parallaxBackground } from "./utils/_parallax-background";
 import { _parallaxFloating } from "./utils/_parallax-floating";
 import { _canvasBanner } from "./utils/_canvas-banner";
-import { _aspectRatio } from "./utils/_aspect-ratio";
 import { _autoScroll } from "./utils/_auto-scroll";
 import { _linkAnimate } from "./utils/_link-animate";
 import { _hlsVideo } from "./utils/_hls-video";
@@ -20,7 +19,6 @@ Object.assign(window, {
     _parallaxBackground,
     _parallaxFloating,
     _canvasBanner,
-    _aspectRatio,
     _autoScroll,
     _linkAnimate,
     _hlsVideo,
@@ -45,11 +43,6 @@ class _scrollingAnimation {
     init() {
         // for resize
         _event.resize((state) => this.resize(state));
-
-        // for aspect ratio
-        document.querySelectorAll("[data-aspect-ratio]").forEach((target) => {
-            new _aspectRatio({ target });
-        });
 
         // for links animate
         document.querySelectorAll(".js-links-animate a, .js-link-animate").forEach((target) => {
