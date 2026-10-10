@@ -21,58 +21,28 @@ Object.assign(window, {
     _hlsVideo,
 });
 
-class _scrollingAnimation {
-    constructor(props) {
-        if (window._scrollingAnimation) return;
-        window._scrollingAnimation = this;
+// for links animate
+document.querySelectorAll(".js-links-animate a, .js-link-animate").forEach((target) => {
+    new _linkAnimate({ target });
+});
 
-        this.debug = props.debug || false;
+// for hls videos
+document.querySelectorAll(".js-hls-video").forEach((target) => {
+    new _hlsVideo({ target });
+});
 
-        this.el = {
-            header: document.querySelector(".header-content"),
-            footer: document.querySelector(".footer-content"),
-            main: document.querySelector(".main-content"),
-        };
+// for auto scroll
+document.querySelectorAll(".js-auto-scroll").forEach((item) => {
+    item.addEventListener("click", (e) => {
+        const _href = item.getAttribute("href") ?? "";
+        const _target = _href.startsWith("#") && document.getElementById(_href.slice(1));
+        if (!_target) return;
 
-        this.init();
-    }
+        e.preventDefault();
+        _autoScroll({ target: _target });
+    });
+});
 
-    init() {
-        // for resize
-        _event.resize((state) => this.resize(state));
-
-        // for links animate
-        document.querySelectorAll(".js-links-animate a, .js-link-animate").forEach((target) => {
-            new _linkAnimate({ target });
-        });
-
-        // for hls videos
-        document.querySelectorAll(".js-hls-video").forEach((target) => {
-            new _hlsVideo({ target });
-        });
-
-        // for auto scroll
-        document.querySelectorAll(".js-auto-scroll").forEach((item) => {
-            item.addEventListener("click", (e) => {
-                const _href = item.getAttribute("href") ?? "";
-                const _target = _href.startsWith("#") && document.getElementById(_href.slice(1));
-                if (!_target) return;
-
-                e.preventDefault();
-                _autoScroll({ target: _target });
-            });
-        });
-
-        // for hash on load
-        const _hashTarget = window.location.hash && document.getElementById(window.location.hash.slice(1).split("?")[0]);
-        if (_hashTarget) setTimeout(() => _autoScroll({ target: _hashTarget }), 500);
-
-        if (this.debug) console.log("_scrollingAnimation", this);
-    }
-
-    resize(state) {
-        // states: init, ready, resize, after
-    }
-}
-
-new _scrollingAnimation({ debug: new URLSearchParams(window.location.search).get("debug") === "true" });
+// for hash on load
+const _hashTarget = window.location.hash && document.getElementById(window.location.hash.slice(1).split("?")[0]);
+if (_hashTarget) setTimeout(() => _autoScroll({ target: _hashTarget }), 500);
