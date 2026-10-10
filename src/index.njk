@@ -180,17 +180,18 @@ scroller.destroy();
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
                 <h3 class="mb-1 font-mono font-semibold">_canvasBanner</h3>
-                <p class="mb-4 text-gray-600">Preloads an image sequence named <code class="font-mono text-sm">path + 0000.jpg</code> and draws the frame for the scroll position you pass to <code class="font-mono text-sm">update(top, bottom)</code>.</p>
+                <p class="mb-4 text-gray-600">Preloads an image sequence and draws the frame for <code class="font-mono text-sm">update(progress)</code>, 0 to 1. Sizes itself to its parent, sharp on high density screens, with an optional crossfade between frames.</p>
                 {% set code %}{% raw %}
 const canvas = new _canvasBanner({
     target: document.querySelector('.js-my-canvas'),
-    assets: { count: 50, path: '/assets/img/frames/frame_', size: [1004, 1214] },
+    assets: { count: 50, path: '/assets/img/frames/frame_', size: [1004, 1214], resizeMode: 'contain' },
+    transition: { duration: 150 },
 });
 
 new _parallaxScroller({
     target: document.querySelector('.js-my-section'),
     events: {
-        update: (scroller) => canvas.update(scroller.offset.top, scroller.offset.bottom),
+        update: (scroller) => canvas.update(scroller.offset.current),
     },
 });
                 {% endraw %}{% endset %}
