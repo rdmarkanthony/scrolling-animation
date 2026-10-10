@@ -8,7 +8,7 @@ title: Scrolling Animation
 {# covers the sticky video until the intro #}
 <div class="relative z-2 min-h-screen bg-white">
     <section class="px-4 pt-24 pb-16 md:pt-32">
-        <div class="mx-auto max-w-5xl">
+        <div class="mx-auto max-w-295">
             <p class="mb-4 font-mono text-sm text-gray-500">11ty · Nunjucks · Tailwind · gsap</p>
             <h1 class="mb-6 text-5xl font-bold tracking-tight md:text-7xl">Scrolling Animation</h1>
             <p class="mb-10 max-w-2xl text-lg text-gray-600 md:text-xl">Scroll-driven animations for 11ty pages. Each demo is a section of markup with a short script under it, so you can copy one into your own page.</p>
@@ -20,7 +20,7 @@ title: Scrolling Animation
     </section>
 
     <section class="px-4 py-16">
-        <div class="mx-auto max-w-5xl">
+        <div class="mx-auto max-w-295">
             <h2 class="mb-8 text-3xl font-bold tracking-tight">Demos</h2>
             <div class="grid gap-6 md:grid-cols-3">
                 <a class="js-auto-scroll group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="#intro">
@@ -46,7 +46,7 @@ title: Scrolling Animation
     </section>
 
     <section class="px-4 py-16">
-        <div class="mx-auto max-w-5xl">
+        <div class="mx-auto max-w-295">
             <h2 class="mb-8 text-3xl font-bold tracking-tight">How it works</h2>
             <ol class="grid gap-10">
                 <li class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
@@ -112,7 +112,7 @@ Object.assign(window, {
     </section>
 
     <section class="px-4 pt-16 pb-32">
-        <div class="mx-auto max-w-5xl">
+        <div class="mx-auto max-w-295">
             <p class="mb-2 font-mono text-sm text-gray-500">Demo</p>
             <h2 class="mb-4 text-3xl font-bold tracking-tight">Title intro</h2>
             <p class="mb-10 max-w-2xl text-gray-600">The next section is the live demo. Its markup and page script are in <code class="font-mono text-sm">src/index.njk</code>.</p>
@@ -131,7 +131,7 @@ Object.assign(window, {
     </div>
     <div id="intro" class="js-title-intro-content relative z-2 pt-[50vh] pb-[35vh]">
         <div class="px-4">
-            <div class="mx-auto max-w-5xl text-center">
+            <div class="mx-auto max-w-295 text-center">
                 <ul class="js-title-intro-list">
                     <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h2 class="mb-2 text-5xl leading-[1.2] font-bold md:text-[80px]">Scroll to drive the animation</h2></li>
                     <li class="translate-y-17.5 pb-20 opacity-0 transition duration-500 last:pb-0 data-[state=active]:translate-y-0 data-[state=active]:opacity-100 data-[state=past]:-translate-y-17.5"><h2 class="mb-2 text-5xl leading-[1.2] font-bold md:text-[80px]">The cover fades as the section enters</h2></li>
@@ -145,11 +145,11 @@ Object.assign(window, {
 </div>
 
 <div class="px-4 py-24">
-    <div class="mx-auto max-w-5xl">
+    <div class="mx-auto max-w-295">
         <h2 class="mb-4 text-3xl font-bold tracking-tight">Utilities</h2>
         <p class="mb-12 max-w-2xl text-gray-600">The scroll and parallax utils, all in <code class="font-mono text-sm">src/assets/js/utils/</code> and used in page scripts.</p>
 
-        <div class="grid gap-6">
+        <div class="grid grid-cols-1 gap-6">
             <div class="rounded-2xl border border-gray-200 p-6">
                 <h3 class="mb-1 font-mono font-semibold">_parallaxScroller</h3>
                 <p class="mb-4 text-gray-600">Measures the target when the page resizes, then on scroll only does the math, at most once per frame. <code class="font-mono text-sm">offset.current</code> is 0 when the target enters the screen and 1 when it leaves, unclamped. Change <code class="font-mono text-sm">offset.top</code> and <code class="font-mono text-sm">offset.bottom</code> in <code class="font-mono text-sm">resize</code> for another range. <code class="font-mono text-sm">portion(min, max)</code> gives the progress within part of the range, as percents of <code class="font-mono text-sm">offset.current</code> or as scroll positions.</p>

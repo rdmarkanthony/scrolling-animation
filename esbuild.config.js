@@ -16,7 +16,7 @@ const publicEnv = Object.fromEntries(
 const ctx = await esbuild.context({
     entryPoints: ["src/assets/js/script.js"],
     bundle: true,
-    minify: !isWatch,
+    minify: true,
     sourcemap: isWatch,
     outdir: "public/assets/js",
     // split dynamic imports (hls.js)
