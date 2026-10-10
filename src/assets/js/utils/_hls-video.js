@@ -1,5 +1,4 @@
-// usage: <video class="js-hls-video" data-src="/assets/video/name/name.m3u8" muted loop autoplay playsinline></video>
-// convert a video with: ffmpeg -i name.mp4 -an -c:v copy -hls_time 4 -hls_playlist_type vod -hls_segment_filename "name/name%d.ts" name/name.m3u8
+// usage: <video class="js-hls-video" data-src="name.m3u8" muted loop autoplay playsinline></video>
 export class _hlsVideo {
     constructor(props) {
         this.target = props.target ?? null;
@@ -13,7 +12,7 @@ export class _hlsVideo {
     }
 
     init() {
-        // autoplay only while on screen, browsers can leave a muted autoplay video paused when it starts offscreen
+        // play only while on screen
         if (this.target.autoplay) {
             this.observer = new IntersectionObserver(([entry]) => {
                 this.visible = entry.isIntersecting;
@@ -24,13 +23,13 @@ export class _hlsVideo {
             document.addEventListener("visibilitychange", this.onVisibility);
         }
 
-        // looping back lands before the first frame when the encode starts late, hop over the gap
+        // skip the gap when looping
         this.target.addEventListener("waiting", () => {
             const _buffered = this.target.buffered;
             if (_buffered.length && this.target.currentTime < _buffered.start(0)) this.target.currentTime = _buffered.start(0);
         });
 
-        // hls.js only matters where MSE exists, chrome claims native hls but can fail on it
+        // use hls.js only if MSE is supported
         const _mse = this.src.endsWith(".m3u8") && ("MediaSource" in window || "ManagedMediaSource" in window);
         if (!_mse) {
             this.target.src = this.src;

@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import { _event } from "./_event";
 import { _scroll } from "./_scroll";
 
-// usage: data-parallax-background="range,easing" e.g. data-parallax-background="100,easing"
+// usage: data-parallax-background="range,easing"
 export class _parallaxBackground {
     constructor(props) {
         this.target = props.target ?? null;
@@ -26,7 +26,7 @@ export class _parallaxBackground {
     }
 
     resize() {
-        // make the background taller than its container so it has room to move
+        // add room to move
         this.target.style.height = "";
         this.target.style.height = `${this.target.offsetHeight + this.range * 0.5}px`;
     }

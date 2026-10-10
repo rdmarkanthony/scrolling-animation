@@ -3,15 +3,15 @@ export const _scroll = {
     top() {
         return window.scrollY;
     },
-    // element top position relative to the document
+    // element top in the document
     offset(target) {
         return target.getBoundingClientRect().top + window.scrollY;
     },
-    // scroll progress between two scroll positions, 0 at min and 1 at max (not clamped)
+    // progress, 0 at min and 1 at max
     progress(min, max) {
         return (this.top() - min) / (max - min);
     },
-    // limit the value between 0 and 1
+    // limit between 0 and 1
     clamp(value) {
         return Math.min(Math.max(value, 0), 1);
     },

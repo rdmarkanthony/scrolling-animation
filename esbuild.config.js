@@ -19,7 +19,7 @@ const ctx = await esbuild.context({
     minify: !isWatch,
     sourcemap: isWatch,
     outdir: "public/assets/js",
-    // dynamic imports (e.g. hls.js) become separate chunks, loaded only when used
+    // split dynamic imports (hls.js)
     splitting: true,
     chunkNames: "chunks/[name]-[hash]",
     format: "esm",

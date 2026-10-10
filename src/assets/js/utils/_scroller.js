@@ -16,7 +16,7 @@ export class _scroller {
     }
 
     init(props) {
-        // set the elements and offset.top/bottom here
+        // set the offsets
         if (props.init) props.init(this);
 
         if (!props.update) return;
@@ -27,18 +27,18 @@ export class _scroller {
         };
 
         _event.scroll(_update);
-        // runs after the offset callbacks registered in init()
+        // for resize
         _event.resize((state, e) => {
             if (state !== "init") _update(e);
         });
     }
 
     update() {
-        // current scroll progress between offset.top and offset.bottom
+        // get the progress
         this.offset.current = _scroll.progress(this.offset.top, this.offset.bottom);
     }
 
-    // progress within a part of the scroller, either by percent of offset.current ("65%", "90%") or by scroll positions
+    // progress within a range, by percent or scroll position
     portion(min, max) {
         if (typeof min === "string" && min.includes("%")) {
             const _min = parseFloat(min) / 100;

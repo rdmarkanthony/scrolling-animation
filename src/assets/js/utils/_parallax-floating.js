@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import { _event } from "./_event";
 import { _scroll } from "./_scroll";
 
-// usage: data-parallax-floating="range" e.g. data-parallax-floating="80"
+// usage: data-parallax-floating="range"
 export class _parallaxFloating {
     constructor(props) {
         this.target = props.target ?? null;

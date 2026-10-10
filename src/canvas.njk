@@ -28,7 +28,7 @@ title: Canvas | Scrolling Animation
     </div>
 </section>
 
-{# demo: the canvas stays pinned while the section scrolls past, the frame follows the scroll #}
+{# demo #}
 <section class="js-canvas-section relative min-h-[300vh]">
     <div class="sticky top-0 flex h-screen items-center justify-center p-6">
         <canvas class="js-canvas max-h-full max-w-full"></canvas>
@@ -125,7 +125,7 @@ new _canvasBanner({
             const _section = canvas.target.closest('.js-canvas-section');
             const _frame = _section.querySelector('.js-canvas-frame');
 
-            // first frame when the section reaches the top, last frame when its end reaches the bottom of the screen
+            // while the section is pinned
             _event.scroll(() => {
                 const _top = _scroll.offset(_section);
 

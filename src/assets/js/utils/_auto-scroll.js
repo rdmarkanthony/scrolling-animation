@@ -5,15 +5,14 @@ import { _scroll } from "./_scroll";
 
 gsap.registerPlugin(ScrollToPlugin);
 
-// smooth scroll to the target, leaving room for the header
 export const _autoScroll = (target, props = {}) => {
-    // data-scroll-diff="selector" scrolls to the closest matching parent instead
+    // if need to scroll to parent of the target
     const _diffTarget = target.dataset.scrollDiff;
     if (_diffTarget) target = target.closest(_diffTarget) ?? target;
 
     const _headerHeight = document.querySelector(".header-content")?.offsetHeight ?? 0;
 
-    // keep the header gap when scrolling up, or on tablet and below
+    // for offset
     let _offset = _scroll.offset(target) <= _scroll.top() || _event.width() <= 991 ? _headerHeight : 0;
     if (parseInt(props.offset)) _offset = props.offset;
     if (_offset <= 0 && target.dataset.headerNav) _offset = 68;

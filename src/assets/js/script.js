@@ -10,7 +10,7 @@ import { _autoScroll } from "./utils/_auto-scroll";
 import { _linkAnimate } from "./utils/_link-animate";
 import { _hlsVideo } from "./utils/_hls-video";
 
-// expose for inline scripts, see each page's {% footerscript %}
+// expose for inline scripts
 Object.assign(window, {
     gsap,
     _event,
@@ -66,7 +66,7 @@ class _scrollingAnimation {
             });
         });
 
-        // scroll to the hash on load
+        // for hash on load
         const _hashTarget = window.location.hash && document.getElementById(window.location.hash.slice(1).split("?")[0]);
         if (_hashTarget) setTimeout(() => _autoScroll(_hashTarget, { offset: this.el.header?.offsetHeight }), 500);
 

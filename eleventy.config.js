@@ -14,7 +14,7 @@ export default function (eleventyConfig) {
         showAllHosts: true,
     });
 
-    // page slots for base.njk, e.g. {% footerscript %}<script type="module">...</script>{% endfooterscript %}
+    // page slots for base.njk
     eleventyConfig.addBundle("styles");
     eleventyConfig.addBundle("headerscript");
     eleventyConfig.addBundle("popup");
@@ -26,7 +26,7 @@ export default function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy("src/assets/video");
     // eleventyConfig.addPassthroughCopy("src/assets/data");
 
-    // zero-pad numbers, e.g. 7 | pad(4) => "0007"
+    // zero-pad numbers
     eleventyConfig.addFilter("pad", (value, length = 2) => String(value).padStart(length, "0"));
 
     // prettify HTML

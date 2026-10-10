@@ -1,6 +1,5 @@
 import { _scroll } from "./_scroll";
 
-// draws an image sequence on a canvas, call update(top, bottom) to pick the frame by scroll position
 export class _canvasBanner {
     constructor(props) {
         this.target = props.target ?? null;
@@ -8,7 +7,7 @@ export class _canvasBanner {
 
         this.assets = {
             count: props.assets?.count ?? 0,
-            path: props.assets?.path ?? "", // frames are named path + 0000 + .type
+            path: props.assets?.path ?? "",
             type: props.assets?.type ?? "jpg",
             size: props.assets?.size ?? [0, 0],
             images: [],
@@ -24,12 +23,12 @@ export class _canvasBanner {
         this.target.width = this.assets.size[0];
         this.target.height = this.assets.size[1];
 
-        // preload all frames
+        // preload
         for (let i = 0; i < this.assets.count; i++) {
             const _img = new Image();
             _img.src = `${this.assets.path}${String(i).padStart(4, "0")}.${this.assets.type}`;
 
-            // draw once loaded if it's the current frame
+            // draw if current frame
             _img.addEventListener("load", () => {
                 if (i === this.assets.current) this.draw();
             });

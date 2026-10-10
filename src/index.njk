@@ -5,7 +5,7 @@ title: Scrolling Animation
 
 {% from "components/code-block.njk" import codeBlock %}
 
-{# white section above the intro, it covers the sticky video until the intro scrolls in #}
+{# covers the sticky video until the intro #}
 <div class="js-links-animate relative z-2 min-h-screen bg-white">
     <section class="px-4 pt-24 pb-16 md:pt-32">
         <div class="mx-auto max-w-5xl">
@@ -266,15 +266,11 @@ _event.dispatch(el, 'visible', { index: 1 }); // listeners read e.detail
             gsap.set(scroller.el.cover, { opacity: 1 - _scroll.clamp(scroller.offset.current) });
 
             // animate the titles parent container
-            // portion of scroller offset.current using %
-            // gsap.set(scroller.el.sc, { opacity: _scroll.clamp(scroller.portion('65%', '90%')) });
-
-            // portion of scroller offset using diff containers offsets
             gsap.set(scroller.el.sc, { opacity: _scroll.clamp(scroller.portion(_scTop - _height * 0.4, _scroll.offset(scroller.el.listWrap) - _height * 0.55)) });
 
             let _currentList = 0;
 
-            // determine which title is in the middle of the display, its top above half the screen (plus a quarter of its height)
+            // which title is in the middle of the display
             scroller.el.list.forEach((item, index) => {
                 const _offset = _height * 0.5 + item.offsetHeight * 0.25 - (_scroll.offset(item) - _scroll.top());
 
@@ -283,7 +279,7 @@ _event.dispatch(el, 'visible', { index: 1 }); // listeners read e.detail
 
             scroller.currentList = _currentList;
 
-            // show the current title, move the previous ones up (see data-[state] classes on each li)
+            // show the current title
             scroller.el.list.forEach((item, index) => {
                 item.dataset.state = index < _currentList ? 'past' : index === _currentList ? 'active' : '';
             });
