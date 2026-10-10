@@ -176,11 +176,11 @@ Object.assign(window, {
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
                 <h4 class="mb-1 font-mono font-semibold">_linkAnimate</h4>
-                <p class="mb-4 text-gray-600">Links to an anchor scroll smoothly, other links fade the page out before leaving. New tabs, mailto and tel work as normal.</p>
+                <p class="mb-4 text-gray-600">Links to an anchor on the page scroll to it smoothly instead of jumping. Other links work as normal. <code class="font-mono text-sm">data-link-animate="false"</code> turns a link off.</p>
                 {% set code %}{% raw %}
-<ul class="js-links-animate">...</ul>
-<a class="js-link-animate" href="/about/">About</a>
-<a class="js-link-animate" href="/about/" data-link-animate="false">Disabled</a>
+<nav class="js-links-animate">...</nav>
+<a class="js-link-animate" href="#contact">Contact</a>
+<a class="js-link-animate" href="#contact" data-link-animate="false">Off</a>
                 {% endraw %}{% endset %}
                 {{ codeBlock(code) }}
             </div>
