@@ -48,8 +48,21 @@ Each page's animation script is in its `{% footerscript %}`, right below the mai
 
 - Use `<script type="module">` so the page script runs after `script.js`.
 - Scripts find elements by `js-` classes (e.g. `js-title-intro`, `js-canvas-section`) or `data-` attributes (e.g. `data-parallax-background`); styling stays in the Tailwind classes.
-- Shared hooks handled by `script.js`: `js-links-animate` (on a list of links) or `js-link-animate` (on a link) to scroll to anchors or fade out before leaving, `js-auto-scroll` for anchor links, and `data-aspect-ratio`.
 - `script.js` exposes `gsap` and the utils from `src/assets/js/utils/` on `window` (e.g. `_scroller`, `_canvasBanner`, `_parallaxBackground`).
+
+### Videos
+
+Videos are served as HLS (`.m3u8` playlist + `.ts` segments) from `src/assets/video/<name>/`. `hls.js` plays them where the browser supports Media Source Extensions, other browsers (e.g. iOS Safari) play the playlist natively. `hls.js` is split into its own chunk, so it only downloads on pages with a video.
+
+Convert an `.mp4` (H.264) without re-encoding, audio removed for muted background videos:
+
+```bash
+ffmpeg -i name.mp4 -an -c:v copy -hls_time 4 -hls_playlist_type vod -hls_segment_filename "name/name%d.ts" name/name.m3u8
+```
+
+If the source isn't H.264, or its keyframes are far apart (long segments), re-encode instead: replace `-c:v copy` with `-c:v libx264 -crf 23 -preset slow -g 60`.
+
+Then use it with `<video class="js-hls-video" data-src="/assets/video/name/name.m3u8" muted loop autoplay playsinline></video>`.
 
 ### SEO
 

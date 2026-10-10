@@ -18,7 +18,10 @@ const ctx = await esbuild.context({
     bundle: true,
     minify: !isWatch,
     sourcemap: isWatch,
-    outfile: "public/assets/js/script.js",
+    outdir: "public/assets/js",
+    // dynamic imports (e.g. hls.js) become separate chunks, loaded only when used
+    splitting: true,
+    chunkNames: "chunks/[name]-[hash]",
     format: "esm",
     target: ["es2020"],
     define: publicEnv,
