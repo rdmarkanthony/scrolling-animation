@@ -1,8 +1,10 @@
 import { gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { _scroll } from "./_scroll";
 
 gsap.registerPlugin(ScrollToPlugin);
+
+const _scrollTop = () => window.scrollY;
+const _offsetTop = (target) => target.getBoundingClientRect().top + _scrollTop();
 
 // usage: _autoScroll({ target, offset, speed, ease, callback })
 export const _autoScroll = ({ target, offset, speed = 500, ease = "power2.out", callback } = {}) => {
@@ -13,8 +15,8 @@ export const _autoScroll = ({ target, offset, speed = 500, ease = "power2.out", 
     if (_parent) target = _parent;
 
     // for direction
-    const _targetTop = _scroll.offset(target);
-    const _direction = _scroll.top() > _targetTop ? "up" : "down";
+    const _targetTop = _offsetTop(target);
+    const _direction = _scrollTop() > _targetTop ? "up" : "down";
 
     // for offset, only a fixed or sticky header covers the target
     const _header = document.querySelector(".header-content");

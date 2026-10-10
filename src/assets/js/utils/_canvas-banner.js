@@ -1,4 +1,4 @@
-import { _scroll } from "./_scroll";
+import { _parallax } from "./_parallax";
 
 export class _canvasBanner {
     constructor(props) {
@@ -40,7 +40,7 @@ export class _canvasBanner {
     }
 
     update(top, bottom) {
-        const _index = Math.round(this.assets.count * _scroll.progress(top, bottom));
+        const _index = Math.round(this.assets.count * _parallax.getRange(top, bottom));
 
         this.assets.current = Math.min(Math.max(_index, 0), this.assets.count - 1);
         this.draw();

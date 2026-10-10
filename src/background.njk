@@ -73,7 +73,7 @@ title: Background | Scrolling Animation
             <div class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
                 <div>
                     <h3 class="mb-2 text-xl font-semibold">Background markup</h3>
-                    <p class="text-gray-600">The background fills an <code class="font-mono text-sm">overflow-hidden</code> parent. The script makes it taller by half the range so it has room to move, and moves it as the parent crosses the screen.</p>
+                    <p class="text-gray-600">The background fills an <code class="font-mono text-sm">overflow-hidden</code> parent. The script makes it taller by the range so it always covers the parent, and moves it from <code class="font-mono text-sm">-range</code> to 0 as the parent crosses the screen.</p>
                 </div>
                 {% set code %}{% raw %}
 <section class="relative min-h-screen">
@@ -137,9 +137,7 @@ document.querySelectorAll('[data-parallax-floating]').forEach((target) => {
         // JS
             // gsap
             // src/assets/js/utils/_event.js
-            // src/assets/js/utils/_scroll.js
-            // src/assets/js/utils/_parallax-background.js
-            // src/assets/js/utils/_parallax-floating.js
+            // src/assets/js/utils/_parallax.js
 
     // for parallax background
     document.querySelectorAll('[data-parallax-background]').forEach((target) => {

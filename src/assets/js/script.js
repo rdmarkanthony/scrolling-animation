@@ -1,10 +1,7 @@
 import { gsap } from "gsap";
 
 import { _event } from "./utils/_event";
-import { _scroll } from "./utils/_scroll";
-import { _scroller } from "./utils/_scroller";
-import { _parallaxBackground } from "./utils/_parallax-background";
-import { _parallaxFloating } from "./utils/_parallax-floating";
+import { _parallax, _parallaxScroller, _parallaxBackground, _parallaxFloating } from "./utils/_parallax";
 import { _canvasBanner } from "./utils/_canvas-banner";
 import { _autoScroll } from "./utils/_auto-scroll";
 import { _linkAnimate } from "./utils/_link-animate";
@@ -14,8 +11,8 @@ import { _hlsVideo } from "./utils/_hls-video";
 Object.assign(window, {
     gsap,
     _event,
-    _scroll,
-    _scroller,
+    _parallax,
+    _parallaxScroller,
     _parallaxBackground,
     _parallaxFloating,
     _canvasBanner,

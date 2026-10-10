@@ -26,7 +26,7 @@ title: Scrolling Animation
                 <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="#intro">
                     <h3 class="mb-2 text-xl font-semibold">Title intro</h3>
                     <p class="mb-6 flex-1 text-gray-600">A sticky video whose dark cover fades as the section scrolls in, then titles step in one at a time.</p>
-                    <p class="mb-4 font-mono text-xs text-gray-500">_scroller</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_parallaxScroller</p>
                     <span class="text-sm font-medium">On this page ↓</span>
                 </a>
                 <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="/canvas/">
@@ -60,8 +60,8 @@ title: Scrolling Animation
 Object.assign(window, {
     gsap,
     _event,
-    _scroll,
-    _scroller,
+    _parallax,
+    _parallaxScroller,
     _parallaxBackground,
     _parallaxFloating,
     _canvasBanner,
@@ -94,17 +94,13 @@ Object.assign(window, {
                     {% set code %}{% raw %}
 {% footerscript %}
 <script type="module">
-    new _scroller({
+    new _parallaxScroller({
         target: document.querySelector('.js-fade-section'),
-        init(scroller) {
-            // offset.current goes from 0 at offset.top to 1 at offset.bottom
-            _event.resize(() => {
-                scroller.offset.top = _scroll.offset(scroller.target) - _event.height();
-                scroller.offset.bottom = _scroll.offset(scroller.target);
-            });
-        },
-        update(scroller) {
-            gsap.set(scroller.target, { opacity: _scroll.clamp(scroller.offset.current) });
+        events: {
+            // offset.current is 0 when the section enters the screen and 1 when it leaves
+            update(scroller) {
+                gsap.set(scroller.target, { opacity: _parallax.clamp(scroller.portion('0%', '50%')) });
+            },
         },
     });
 </script>
@@ -156,22 +152,30 @@ Object.assign(window, {
 
         <div class="grid gap-6">
             <div class="rounded-2xl border border-gray-200 p-6">
-                <h3 class="mb-1 font-mono font-semibold">_scroller</h3>
-                <p class="mb-4 text-gray-600">Runs <code class="font-mono text-sm">update()</code> on every scroll and resize. Set <code class="font-mono text-sm">offset.top</code> and <code class="font-mono text-sm">offset.bottom</code> in <code class="font-mono text-sm">init()</code>, then read <code class="font-mono text-sm">offset.current</code>: 0 at the top, 1 at the bottom, unclamped. <code class="font-mono text-sm">portion(min, max)</code> gives the progress within part of the range, as percents of <code class="font-mono text-sm">offset.current</code> or as scroll positions.</p>
+                <h3 class="mb-1 font-mono font-semibold">_parallaxScroller</h3>
+                <p class="mb-4 text-gray-600">Measures the target when the page resizes, then on scroll only does the math, at most once per frame. <code class="font-mono text-sm">offset.current</code> is 0 when the target enters the screen and 1 when it leaves, unclamped. Change <code class="font-mono text-sm">offset.top</code> and <code class="font-mono text-sm">offset.bottom</code> in <code class="font-mono text-sm">resize</code> for another range. <code class="font-mono text-sm">portion(min, max)</code> gives the progress within part of the range, as percents of <code class="font-mono text-sm">offset.current</code> or as scroll positions.</p>
                 {% set code %}{% raw %}
-new _scroller({
+const scroller = new _parallaxScroller({
     target: document.querySelector('.js-my-section'),
-    init(scroller) {
-        _event.resize(() => {
-            scroller.offset.top = _scroll.offset(scroller.target) - _event.height();
-            scroller.offset.bottom = _scroll.offset(scroller.target) + scroller.target.offsetHeight;
-        });
-    },
-    update(scroller) {
-        const _progress = _scroll.clamp(scroller.portion('20%', '60%'));
-        gsap.set(scroller.target, { scale: 0.8 + _progress * 0.2 });
+    events: {
+        // once, before measuring
+        init(scroller) {},
+        // after measuring, e.g. from the section's top until its end reaches the bottom of the screen
+        resize(scroller) {
+            const _offset = _parallax.getOffset(scroller.target);
+            scroller.offset.top = _offset.top;
+            scroller.offset.bottom = _offset.bottom - _event.height();
+        },
+        // on scroll
+        update(scroller) {
+            const _progress = _parallax.clamp(scroller.portion('20%', '60%'));
+            gsap.set(scroller.target, { scale: 0.8 + _progress * 0.2 });
+        },
     },
 });
+
+scroller.on('update', (scroller) => {}); // more listeners, remove with off()
+scroller.destroy();
                 {% endraw %}{% endset %}
                 {{ codeBlock(code, 'js') }}
             </div>
@@ -179,15 +183,15 @@ new _scroller({
                 <h3 class="mb-1 font-mono font-semibold">_canvasBanner</h3>
                 <p class="mb-4 text-gray-600">Preloads an image sequence named <code class="font-mono text-sm">path + 0000.jpg</code> and draws the frame for the scroll position you pass to <code class="font-mono text-sm">update(top, bottom)</code>.</p>
                 {% set code %}{% raw %}
-new _canvasBanner({
+const canvas = new _canvasBanner({
     target: document.querySelector('.js-my-canvas'),
     assets: { count: 50, path: '/assets/img/frames/frame_', size: [1004, 1214] },
-    init(canvas) {
-        const _section = canvas.target.closest('.js-my-section');
-        _event.scroll(() => {
-            const _top = _scroll.offset(_section);
-            canvas.update(_top, _top + _section.offsetHeight * 0.4);
-        });
+});
+
+new _parallaxScroller({
+    target: document.querySelector('.js-my-section'),
+    events: {
+        update: (scroller) => canvas.update(scroller.offset.top, scroller.offset.bottom),
     },
 });
                 {% endraw %}{% endset %}
@@ -195,7 +199,7 @@ new _canvasBanner({
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
                 <h3 class="mb-1 font-mono font-semibold">_parallaxBackground · _parallaxFloating</h3>
-                <p class="mb-4 text-gray-600">The background moves within an <code class="font-mono text-sm">overflow-hidden</code> parent, <code class="font-mono text-sm">range</code> in pixels, <code class="font-mono text-sm">easing</code> to smooth it. The floating element drifts down by its range.</p>
+                <p class="mb-4 text-gray-600">The background is made <code class="font-mono text-sm">range</code> pixels taller than its <code class="font-mono text-sm">overflow-hidden</code> parent and moves from <code class="font-mono text-sm">-range</code> to 0 as the parent crosses the screen. <code class="font-mono text-sm">easing</code> smooths it. The floating element drifts down by its range, eased. Both are built on <code class="font-mono text-sm">_parallaxScroller</code> and stay still when reduced motion is on.</p>
                 {% set code %}{% raw %}
 <div class="relative overflow-hidden">
     <div class="absolute inset-0 bg-cover" data-parallax-background="100,easing" style="background-image: url('/assets/img/banner1.jpg')"></div>
@@ -208,13 +212,13 @@ document.querySelectorAll('[data-parallax-floating]').forEach((target) => new _p
                 {{ codeBlock(code) }}
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
-                <h3 class="mb-1 font-mono font-semibold">_scroll · _event</h3>
+                <h3 class="mb-1 font-mono font-semibold">_parallax · _event</h3>
                 <p class="mb-4 text-gray-600">Helpers the other utils are built on. <code class="font-mono text-sm">_event</code> keeps one scroll and one resize listener for the whole page, however many callbacks are added.</p>
                 {% set code %}{% raw %}
-_scroll.top();              // current scroll position
-_scroll.offset(el);         // element top relative to the document
-_scroll.progress(min, max); // 0 at min, 1 at max, unclamped
-_scroll.clamp(value);       // limit to 0 - 1
+_parallax.scrollTop();        // current scroll position
+_parallax.getOffset(el);      // { top, left, bottom, right } in the document, transforms ignored
+_parallax.getRange(min, max); // 0 at min, 1 at max, unclamped
+_parallax.clamp(value);       // limit to 0 - 1
 
 _event.resize((state) => {});  // state: init, ready, resize, after
 _event.scroll((e) => {});      // runs once now, then at most once per frame while scrolling
@@ -240,49 +244,47 @@ _event.dispatch(el, 'visible', { index: 1 }); // listeners read e.detail
         // JS
             // gsap
             // src/assets/js/utils/_event.js
-            // src/assets/js/utils/_scroll.js
-            // src/assets/js/utils/_scroller.js
+            // src/assets/js/utils/_parallax.js
 
     // animate the intro section with video banner
-    new _scroller({
-        target: document.querySelector('.js-title-intro'),
-        init(scroller) {
-            scroller.el.sc = scroller.target.querySelector('.js-title-intro-content');
-            scroller.el.cover = scroller.target.querySelector('.js-title-intro-cover');
-            scroller.el.listWrap = scroller.target.querySelector('.js-title-intro-list');
-            scroller.el.list = scroller.target.querySelectorAll('.js-title-intro-list li');
-            scroller.currentList = 0;
+    new _parallaxScroller({
+        target: document.querySelector('.js-title-intro-content'),
+        events: {
+            init(scroller) {
+                scroller.el.cover = scroller.target.closest('.js-title-intro').querySelector('.js-title-intro-cover');
+                scroller.el.listWrap = scroller.target.querySelector('.js-title-intro-list');
+                scroller.el.list = [...scroller.el.listWrap.children];
+            },
+            resize(scroller) {
+                const _height = _event.height();
+                const _top = _parallax.getOffset(scroller.target).top;
 
-            _event.resize(() => {
-                scroller.offset.top = _scroll.offset(scroller.el.sc) - _event.height();
-                scroller.offset.bottom = _scroll.offset(scroller.el.sc);
-            });
-        },
-        update(scroller) {
-            const _height = _event.height();
-            const _scTop = _scroll.offset(scroller.el.sc);
+                // while the content enters the screen
+                scroller.offset.top = _top - _height;
+                scroller.offset.bottom = _top;
 
-            // animate the video dim cover
-            gsap.set(scroller.el.cover, { opacity: 1 - _scroll.clamp(scroller.offset.current) });
+                // for the titles fade in
+                scroller.fade = [_top - _height * 0.4, _parallax.getOffset(scroller.el.listWrap).top - _height * 0.55];
 
-            // animate the titles parent container
-            gsap.set(scroller.el.sc, { opacity: _scroll.clamp(scroller.portion(_scTop - _height * 0.4, _scroll.offset(scroller.el.listWrap) - _height * 0.55)) });
+                // when each title reaches the middle of the display
+                scroller.steps = scroller.el.list.map((item) => _parallax.getOffset(item).top - _height * 0.5 - item.offsetHeight * 0.25);
+            },
+            update(scroller) {
+                // animate the video dim cover
+                gsap.set(scroller.el.cover, { opacity: 1 - _parallax.clamp(scroller.offset.current) });
 
-            let _currentList = 0;
+                // animate the titles parent container
+                gsap.set(scroller.target, { opacity: _parallax.clamp(scroller.portion(...scroller.fade)) });
 
-            // which title is in the middle of the display
-            scroller.el.list.forEach((item, index) => {
-                const _offset = _height * 0.5 + item.offsetHeight * 0.25 - (_scroll.offset(item) - _scroll.top());
+                // which title is in the middle of the display
+                const _scrollTop = _parallax.scrollTop();
+                const _current = scroller.steps.reduce((current, step, index) => (_scrollTop >= step ? index : current), 0);
 
-                if (_offset >= 0) _currentList = index;
-            });
-
-            scroller.currentList = _currentList;
-
-            // show the current title
-            scroller.el.list.forEach((item, index) => {
-                item.dataset.state = index < _currentList ? 'past' : index === _currentList ? 'active' : '';
-            });
+                // show the current title
+                scroller.el.list.forEach((item, index) => {
+                    item.dataset.state = index < _current ? 'past' : index === _current ? 'active' : '';
+                });
+            },
         },
     });
 </script>

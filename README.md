@@ -48,7 +48,7 @@ Each page's animation script is in its `{% footerscript %}`, right below the mai
 
 - Use `<script type="module">` so the page script runs after `script.js`.
 - Scripts find elements by `js-` classes (e.g. `js-title-intro`, `js-canvas-section`) or `data-` attributes (e.g. `data-parallax-background`); styling stays in the Tailwind classes.
-- `script.js` exposes `gsap` and the utils from `src/assets/js/utils/` on `window` (e.g. `_scroller`, `_canvasBanner`, `_parallaxBackground`).
+- `script.js` exposes `gsap` and the utils from `src/assets/js/utils/` on `window` (e.g. `_parallaxScroller`, `_canvasBanner`, `_parallaxBackground`).
 
 ### Videos
 

@@ -9,7 +9,7 @@ title: Canvas | Scrolling Animation
 
 <section class="px-4 pt-24 pb-16 md:pt-32">
     <div class="mx-auto max-w-5xl">
-        <p class="mb-4 font-mono text-sm text-gray-500">Demo · _canvasBanner</p>
+        <p class="mb-4 font-mono text-sm text-gray-500">Demo · _canvasBanner · _parallaxScroller</p>
         <h1 class="mb-6 text-5xl font-bold tracking-tight md:text-7xl">Canvas image sequence</h1>
         <p class="max-w-2xl text-lg text-gray-600 md:text-xl">A set of frames drawn on a canvas, picked by the scroll position. Scrolling moves through the frames like scrubbing a video, forward and back.</p>
     </div>
@@ -57,24 +57,30 @@ title: Canvas | Scrolling Animation
             <div class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
                 <div>
                     <h3 class="mb-2 text-xl font-semibold">Script</h3>
-                    <p class="text-gray-600"><code class="font-mono text-sm">update(top, bottom)</code> draws the first frame at scroll position <code class="font-mono text-sm">top</code> and the last at <code class="font-mono text-sm">bottom</code>. Here that's while the section is pinned: from its top until its end reaches the bottom of the screen.</p>
+                    <p class="text-gray-600"><code class="font-mono text-sm">_parallaxScroller</code> measures the section on resize. Its range is set to while the section is pinned: from its top until its end reaches the bottom of the screen. On scroll, <code class="font-mono text-sm">update(top, bottom)</code> draws the frame for that range.</p>
                 </div>
                 {% set code %}{% raw %}
-new _canvasBanner({
+const canvas = new _canvasBanner({
     target: document.querySelector('.js-canvas'),
     assets: {
         count: 50,
         path: '/assets/img/headphone/large_',
         size: [1004, 1214],
     },
-    init(canvas) {
-        const _section = canvas.target.closest('.js-canvas-section');
+});
 
-        _event.scroll(() => {
-            const _top = _scroll.offset(_section);
+new _parallaxScroller({
+    target: document.querySelector('.js-canvas-section'),
+    events: {
+        resize(scroller) {
+            const _offset = _parallax.getOffset(scroller.target);
 
-            canvas.update(_top, _top + _section.offsetHeight - _event.height());
-        });
+            scroller.offset.top = _offset.top;
+            scroller.offset.bottom = _offset.bottom - _event.height();
+        },
+        update(scroller) {
+            canvas.update(scroller.offset.top, scroller.offset.bottom);
+        },
     },
 });
                 {% endraw %}{% endset %}
@@ -95,7 +101,9 @@ new _canvasBanner({
                     <dt class="font-mono font-semibold">assets.size</dt>
                     <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Frame size in pixels, <code class="font-mono">[width, height]</code>, used as the canvas size</dd>
                     <dt class="font-mono font-semibold">init(canvas)</dt>
-                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Runs once after setup, hook up <code class="font-mono">update()</code> here</dd>
+                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Runs once after setup</dd>
+                    <dt class="font-mono font-semibold">update(top, bottom)</dt>
+                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Draws the frame for the scroll position between <code class="font-mono">top</code> and <code class="font-mono">bottom</code></dd>
                     <dt class="font-mono font-semibold">canvas.assets.current</dt>
                     <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Index of the frame on screen</dd>
                 </dl>
@@ -110,28 +118,34 @@ new _canvasBanner({
     // Requirements
         // JS
             // src/assets/js/utils/_event.js
-            // src/assets/js/utils/_scroll.js
+            // src/assets/js/utils/_parallax.js
             // src/assets/js/utils/_canvas-banner.js
 
     // image sequence drawn on canvas while scrolling
-    new _canvasBanner({
+    const _canvas = new _canvasBanner({
         target: document.querySelector('.js-canvas'),
         assets: {
             count: 50,
             path: '/assets/img/headphone/large_',
             size: [1004, 1214],
         },
-        init(canvas) {
-            const _section = canvas.target.closest('.js-canvas-section');
-            const _frame = _section.querySelector('.js-canvas-frame');
+    });
+    const _frame = document.querySelector('.js-canvas-frame');
 
+    new _parallaxScroller({
+        target: document.querySelector('.js-canvas-section'),
+        events: {
             // while the section is pinned
-            _event.scroll(() => {
-                const _top = _scroll.offset(_section);
+            resize(scroller) {
+                const _offset = _parallax.getOffset(scroller.target);
 
-                canvas.update(_top, _top + _section.offsetHeight - _event.height());
-                _frame.textContent = canvas.assets.current + 1;
-            });
+                scroller.offset.top = _offset.top;
+                scroller.offset.bottom = _offset.bottom - _event.height();
+            },
+            update(scroller) {
+                _canvas.update(scroller.offset.top, scroller.offset.bottom);
+                _frame.textContent = _canvas.assets.current + 1;
+            },
         },
     });
 </script>
