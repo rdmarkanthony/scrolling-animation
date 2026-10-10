@@ -209,17 +209,23 @@ document.querySelectorAll('[data-parallax-floating]').forEach((target) => new _p
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
                 <h3 class="mb-1 font-mono font-semibold">_scroll · _event</h3>
-                <p class="mb-4 text-gray-600">Helpers the other utils are built on.</p>
+                <p class="mb-4 text-gray-600">Helpers the other utils are built on. <code class="font-mono text-sm">_event</code> keeps one scroll and one resize listener for the whole page, however many callbacks are added.</p>
                 {% set code %}{% raw %}
 _scroll.top();              // current scroll position
 _scroll.offset(el);         // element top relative to the document
 _scroll.progress(min, max); // 0 at min, 1 at max, unclamped
 _scroll.clamp(value);       // limit to 0 - 1
 
-_event.resize((state) => {}); // state: init, ready, resize, after
-_event.scroll((e) => {});     // runs once now, then on every scroll
-_event.width();               // viewport size without the scrollbar
+_event.resize((state) => {});  // state: init, ready, resize, after
+_event.scroll((e) => {});      // runs once now, then at most once per frame while scrolling
+_event.observeResize((entry) => {}, el); // el changes size, e.g. images load above it
+
+const off = _event.scroll(callback); // every subscribe returns a function that removes it
+off();
+
+_event.width();                // viewport size without the scrollbar
 _event.height();
+_event.dispatch(el, 'visible', { index: 1 }); // listeners read e.detail
                 {% endraw %}{% endset %}
                 {{ codeBlock(code, 'js') }}
             </div>

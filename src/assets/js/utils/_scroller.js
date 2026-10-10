@@ -1,3 +1,4 @@
+import { _event } from "./_event";
 import { _scroll } from "./_scroll";
 
 export class _scroller {
@@ -25,9 +26,11 @@ export class _scroller {
             props.update(this, e);
         };
 
-        _update();
-        document.addEventListener("scroll", _update);
-        window.addEventListener("resize", _update);
+        _event.scroll(_update);
+        // runs after the offset callbacks registered in init()
+        _event.resize((state, e) => {
+            if (state !== "init") _update(e);
+        });
     }
 
     update() {
