@@ -18,7 +18,7 @@ title: Canvas | Scrolling Animation
 <section class="px-4 py-16">
     <div class="mx-auto max-w-295">
         <h2 class="mb-2 text-3xl font-bold tracking-tight">The frames</h2>
-        <p class="mb-8 max-w-2xl text-gray-600">50 JPGs named <code class="font-mono text-sm">large_0000.jpg</code> to <code class="font-mono text-sm">large_0049.jpg</code>. All of them load up front, so drawing a frame is instant.</p>
+        <p class="mb-8 max-w-2xl text-gray-600">50 JPGs named <code class="font-mono text-sm">large_0000.jpg</code> to <code class="font-mono text-sm">large_0049.jpg</code>, and a half-size WebP set <code class="font-mono text-sm">small_0000.webp</code> for phones. Only the frames near the current one stay loaded, decoded ahead so drawing one is instant.</p>
         <ul class="grid grid-cols-10 gap-1">
             {% for i in range(0, 50) %}
             <li><img class="w-full" src="/assets/img/headphone/large_{{ i | pad(4) }}.jpg" alt="" loading="lazy" /></li>
@@ -43,7 +43,7 @@ title: Canvas | Scrolling Animation
             <div class="grid gap-4 md:grid-cols-[1fr_2fr] md:gap-10">
                 <div>
                     <h3 class="mb-2 text-xl font-semibold">Markup</h3>
-                    <p class="text-gray-600">A tall section with a sticky, screen-high wrapper. The canvas stays pinned while the section scrolls past. With <code class="font-mono text-sm">resizeMode: 'contain'</code> the script fits it inside the wrapper at its frame ratio.</p>
+                    <p class="text-gray-600">A tall section with a sticky, screen-high wrapper. The canvas stays pinned while the section scrolls past. With <code class="font-mono text-sm">resizeMode: 'contain'</code> the script fits it inside the wrapper at its frame ratio. It's drawn at the screen's pixel density, up to the frame size, so it stays sharp.</p>
                 </div>
                 {% set code %}{% raw %}
 <section class="js-canvas-section relative min-h-[300vh]">
@@ -68,6 +68,13 @@ const canvas = new _canvasBanner({
         digits: 4,
         size: [1004, 1214],
         resizeMode: 'contain',
+        // below 768px wide
+        mobile: {
+            path: '/assets/img/headphone/small_',
+            type: 'webp',
+            size: [502, 607],
+            step: 2,
+        },
     },
 });
 
@@ -78,7 +85,7 @@ new _parallaxScroller({
             const _offset = _parallax.getOffset(scroller.target);
 
             scroller.offset.top = _offset.top;
-            scroller.offset.bottom = _offset.bottom - _event.height();
+            scroller.offset.bottom = _offset.bottom - _parallax.height();
         },
         update(scroller) {
             canvas.update(scroller.offset.current);
@@ -106,6 +113,12 @@ new _parallaxScroller({
                     <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Frame size in pixels, <code class="font-mono">[width, height]</code>, for the ratio</dd>
                     <dt class="font-mono font-semibold">assets.resizeMode</dt>
                     <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0"><code class="font-mono">width</code> (default) fills the parent's width, <code class="font-mono">height</code> its height, <code class="font-mono">contain</code> fits inside it</dd>
+                    <dt class="font-mono font-semibold">assets.step</dt>
+                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Use every nth frame, default 1, e.g. 2 for half the frames. The last frame is always kept</dd>
+                    <dt class="font-mono font-semibold">assets.buffer</dt>
+                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Frames kept loaded before and after the current one, default 20. Further ones are unloaded to save memory</dd>
+                    <dt class="font-mono font-semibold">assets.mobile</dt>
+                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Any of <code class="font-mono">path</code>, <code class="font-mono">type</code>, <code class="font-mono">size</code>, <code class="font-mono">step</code>, <code class="font-mono">buffer</code> to use instead below 768px wide, or when <code class="font-mono">media</code> matches</dd>
                     <dt class="font-mono font-semibold">transition.duration</dt>
                     <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Crossfade between frames in ms, default 0</dd>
                     <dt class="font-mono font-semibold">events</dt>
@@ -113,7 +126,7 @@ new _parallaxScroller({
                     <dt class="font-mono font-semibold">update(progress)</dt>
                     <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Draws the frame for 0 (first) to 1 (last)</dd>
                     <dt class="font-mono font-semibold">canvas.assets.current</dt>
-                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Index of the frame on screen</dd>
+                    <dd class="mb-3 text-gray-600 last:mb-0 md:mb-0">Index of the current frame, <code class="font-mono">canvas.assets.frames[index]</code> is its file number</dd>
                 </dl>
             </div>
         </div>
@@ -138,6 +151,13 @@ new _parallaxScroller({
             digits: 4,
             size: [1004, 1214],
             resizeMode: 'contain',
+            // below 768px wide
+            mobile: {
+                path: '/assets/img/headphone/small_',
+                type: 'webp',
+                size: [502, 607],
+                step: 2,
+            },
         },
     });
     const _frame = document.querySelector('.js-canvas-frame');
@@ -150,11 +170,11 @@ new _parallaxScroller({
                 const _offset = _parallax.getOffset(scroller.target);
 
                 scroller.offset.top = _offset.top;
-                scroller.offset.bottom = _offset.bottom - _event.height();
+                scroller.offset.bottom = _offset.bottom - _parallax.height();
             },
             update(scroller) {
                 _canvas.update(scroller.offset.current);
-                _frame.textContent = _canvas.assets.current + 1;
+                _frame.textContent = _canvas.assets.frames[_canvas.assets.current] + 1;
             },
         },
     });
