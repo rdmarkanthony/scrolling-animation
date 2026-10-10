@@ -48,7 +48,6 @@ Each page's animation script is in its `{% footerscript %}`, right below the mai
 
 - Use `<script type="module">` so the page script runs after `script.js`.
 - Scripts find elements by `js-` classes (e.g. `js-title-intro`, `js-canvas-section`) or `data-` attributes (e.g. `data-parallax-background`); styling stays in the Tailwind classes.
-- Shared hooks handled by `script.js`: `js-links-animate` (on a list of links) or `js-link-animate` (on a link) to scroll smoothly to anchors on the page, `js-auto-scroll` for anchor links, `js-hls-video` for HLS videos, and `data-aspect-ratio`.
 - `script.js` exposes `gsap` and the utils from `src/assets/js/utils/` on `window` (e.g. `_scroller`, `_canvasBanner`, `_parallaxBackground`).
 
 ### Videos

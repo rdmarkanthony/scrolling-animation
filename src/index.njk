@@ -26,7 +26,7 @@ title: Scrolling Animation
                 <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="#intro">
                     <h3 class="mb-2 text-xl font-semibold">Title intro</h3>
                     <p class="mb-6 flex-1 text-gray-600">A sticky video whose dark cover fades as the section scrolls in, then titles step in one at a time.</p>
-                    <p class="mb-4 font-mono text-xs text-gray-500">_scroller · _hlsVideo</p>
+                    <p class="mb-4 font-mono text-xs text-gray-500">_scroller</p>
                     <span class="text-sm font-medium">On this page ↓</span>
                 </a>
                 <a class="group flex flex-col rounded-2xl border border-gray-200 p-6 transition-colors hover:border-gray-950" href="/canvas/">
@@ -53,7 +53,7 @@ title: Scrolling Animation
                     <div>
                         <p class="mb-2 font-mono text-sm text-gray-500">01</p>
                         <h3 class="mb-2 text-xl font-semibold">script.js loads the utils</h3>
-                        <p class="text-gray-600">It sets up the shared hooks (links, aspect ratio, HLS videos) and puts every util on <code class="font-mono text-sm">window</code> for page scripts.</p>
+                        <p class="text-gray-600">It runs the shared setup for every page and puts every util on <code class="font-mono text-sm">window</code> for page scripts.</p>
                     </div>
                     {% set code %}{% raw %}
 // src/assets/js/script.js
@@ -153,54 +153,11 @@ Object.assign(window, {
 <div class="js-links-animate px-4 py-24">
     <div class="mx-auto max-w-5xl">
         <h2 class="mb-4 text-3xl font-bold tracking-tight">Utilities</h2>
-        <p class="mb-12 max-w-2xl text-gray-600">All in <code class="font-mono text-sm">src/assets/js/utils/</code>. The first group works from markup alone, <code class="font-mono text-sm">script.js</code> sets them up on every page. The second group is used in page scripts.</p>
+        <p class="mb-12 max-w-2xl text-gray-600">The scroll and parallax utils, all in <code class="font-mono text-sm">src/assets/js/utils/</code> and used in page scripts.</p>
 
-        <h3 class="mb-6 text-sm font-semibold tracking-wide text-gray-500 uppercase">Markup only</h3>
-        <div class="mb-16 grid gap-6">
-            <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_hlsVideo</h4>
-                <p class="mb-4 text-gray-600">Plays an HLS video with hls.js, or natively where hls.js isn't needed. The README has the ffmpeg command to convert a video.</p>
-                {% set code %}{% raw %}
-<video class="js-hls-video" data-src="/assets/video/name/name.m3u8" muted loop autoplay playsinline></video>
-                {% endraw %}{% endset %}
-                {{ codeBlock(code) }}
-            </div>
-            <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_aspectRatio</h4>
-                <p class="mb-4 text-gray-600">Sizes the element to its parent's width at a fixed ratio. Add <code class="font-mono text-sm">minheight</code> to set min-height, <code class="font-mono text-sm">vertical</code> to follow the parent's height.</p>
-                {% set code %}{% raw %}
-<div data-aspect-ratio="1006,1584"></div>
-<div data-aspect-ratio="16,9,minheight"></div>
-                {% endraw %}{% endset %}
-                {{ codeBlock(code) }}
-            </div>
-            <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_linkAnimate</h4>
-                <p class="mb-4 text-gray-600">Links to an anchor on the page scroll to it smoothly instead of jumping. Other links work as normal. <code class="font-mono text-sm">data-link-animate="false"</code> turns a link off.</p>
-                {% set code %}{% raw %}
-<nav class="js-links-animate">...</nav>
-<a class="js-link-animate" href="#contact">Contact</a>
-<a class="js-link-animate" href="#contact" data-link-animate="false">Off</a>
-                {% endraw %}{% endset %}
-                {{ codeBlock(code) }}
-            </div>
-            <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_autoScroll</h4>
-                <p class="mb-4 text-gray-600">Smooth scrolls to an anchor, leaving room for the header. <code class="font-mono text-sm">data-scroll-diff</code> on the target scrolls to its closest matching parent instead.</p>
-                {% set code %}{% raw %}
-<a class="js-auto-scroll" href="#contact">Contact</a>
-
-// or from a script
-_autoScroll(document.getElementById('contact'), { offset: 80, speed: 700 });
-                {% endraw %}{% endset %}
-                {{ codeBlock(code) }}
-            </div>
-        </div>
-
-        <h3 class="mb-6 text-sm font-semibold tracking-wide text-gray-500 uppercase">In page scripts</h3>
         <div class="grid gap-6">
             <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_scroller</h4>
+                <h3 class="mb-1 font-mono font-semibold">_scroller</h3>
                 <p class="mb-4 text-gray-600">Runs <code class="font-mono text-sm">update()</code> on every scroll and resize. Set <code class="font-mono text-sm">offset.top</code> and <code class="font-mono text-sm">offset.bottom</code> in <code class="font-mono text-sm">init()</code>, then read <code class="font-mono text-sm">offset.current</code>: 0 at the top, 1 at the bottom, unclamped. <code class="font-mono text-sm">portion(min, max)</code> gives the progress within part of the range, as percents of <code class="font-mono text-sm">offset.current</code> or as scroll positions.</p>
                 {% set code %}{% raw %}
 new _scroller({
@@ -220,7 +177,7 @@ new _scroller({
                 {{ codeBlock(code, 'js') }}
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_canvasBanner</h4>
+                <h3 class="mb-1 font-mono font-semibold">_canvasBanner</h3>
                 <p class="mb-4 text-gray-600">Preloads an image sequence named <code class="font-mono text-sm">path + 0000.jpg</code> and draws the frame for the scroll position you pass to <code class="font-mono text-sm">update(top, bottom)</code>.</p>
                 {% set code %}{% raw %}
 new _canvasBanner({
@@ -238,7 +195,7 @@ new _canvasBanner({
                 {{ codeBlock(code, 'js') }}
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_parallaxBackground · _parallaxFloating</h4>
+                <h3 class="mb-1 font-mono font-semibold">_parallaxBackground · _parallaxFloating</h3>
                 <p class="mb-4 text-gray-600">The background moves within an <code class="font-mono text-sm">overflow-hidden</code> parent, <code class="font-mono text-sm">range</code> in pixels, <code class="font-mono text-sm">easing</code> to smooth it. The floating element drifts down by its range.</p>
                 {% set code %}{% raw %}
 <div class="relative overflow-hidden">
@@ -252,7 +209,7 @@ document.querySelectorAll('[data-parallax-floating]').forEach((target) => new _p
                 {{ codeBlock(code) }}
             </div>
             <div class="rounded-2xl border border-gray-200 p-6">
-                <h4 class="mb-1 font-mono font-semibold">_scroll · _event</h4>
+                <h3 class="mb-1 font-mono font-semibold">_scroll · _event</h3>
                 <p class="mb-4 text-gray-600">Helpers the other utils are built on.</p>
                 {% set code %}{% raw %}
 _scroll.top();              // current scroll position
